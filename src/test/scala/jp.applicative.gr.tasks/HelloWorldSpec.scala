@@ -1,4 +1,4 @@
-package jp.applicative.goldrushtasks
+package jp.applicative.gr.tasks
 
 import org.scalatest.FunSpec
 
