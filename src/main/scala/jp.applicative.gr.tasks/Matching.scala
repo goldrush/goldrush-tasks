@@ -1,6 +1,7 @@
 package jp.applicative.gr.tasks
 
 import scalikejdbc._
+import jp.applicative.gr.models._
 
 class Matching {
   implicit val session = AutoSession
@@ -9,7 +10,7 @@ class Matching {
     
   }
   def list() = {
-	  val x: List[Map[String, Any]] = sql"select * from import_mails order by id desc limit 2".map(_.toMap).list.apply
+	  val x: List[ImportMail] = ImportMailEx.findBizOffers()
 	  x
   }
 }
