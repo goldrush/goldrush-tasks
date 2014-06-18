@@ -1,7 +1,7 @@
 package jp.applicative.gr.models.ex
 
 import scalikejdbc._
-import org.joda.time.{DateTime}
+import org.joda.time.{DateTime, DateTimeZone}
 import jp.applicative.gr.models.SysConfig
 
 object SysConfigEx {
@@ -35,7 +35,7 @@ object SysConfigEx {
 			      value3 = conf.value3,
 			      configDescriptionText = conf.configDescriptionText,
 			      createdAt = conf.createdAt,
-			      updatedAt = DateTime.now,
+			      updatedAt = new DateTime(DateTimeZone.UTC),
 			      lockVersion = conf.lockVersion.map(_ + 1),
 			      createdUser = conf.createdUser,
 			      updatedUser = Some("MailMatching"),
@@ -46,7 +46,7 @@ object SysConfigEx {
   }
   
   def createLastId(last_id:Long) {
-   		val now = DateTime.now
+   		val now = new DateTime(DateTimeZone.UTC)
       	SysConfig.create(
 	        ownerId = None,
 		    configSection = "import_mail_matches",

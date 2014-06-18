@@ -5,6 +5,7 @@ import jp.applicative.gr.models._
 import jp.applicative.gr.models.ex._
 import org.joda.time.DateTime
 import scalikejdbc.AutoSession
+import org.joda.time.DateTimeZone
 
 class Matching {
   implicit val session = AutoSession
@@ -52,7 +53,7 @@ class Matching {
       		val p = point(checked)
       		
       		if(p > 0) {
-	      		val now = DateTime.now
+	      		val now = new DateTime(DateTimeZone.UTC)
 	      		val imm = ImportMailMatch.create(
 				    ownerId = None,
 				    bizOfferMailId = biz.id,
