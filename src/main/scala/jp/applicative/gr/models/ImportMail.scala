@@ -29,6 +29,8 @@ class ImportMail(
   val tagText: Option[String] = None,
   val payment: Option[Double] = None,
   val age: Option[Int] = None,
+  val paymentText: Option[String] = None,
+  val ageText: Option[String] = None,
   val nearestStation: Option[String] = None,
   val createdAt: DateTime,
   val updatedAt: DateTime,
@@ -64,6 +66,8 @@ class ImportMail(
     tagText: Option[String] = this.tagText,
     payment: Option[Double] = this.payment,
     age: Option[Int] = this.age,
+    paymentText: Option[String] = this.paymentText,
+    ageText: Option[String] = this.ageText,
     nearestStation: Option[String] = this.nearestStation,
     createdAt: DateTime = this.createdAt,
     updatedAt: DateTime = this.updatedAt,
@@ -98,6 +102,8 @@ class ImportMail(
       tagText = tagText,
       payment = payment,
       age = age,
+      paymentText = paymentText,
+      ageText = ageText,
       nearestStation = nearestStation,
       createdAt = createdAt,
       updatedAt = updatedAt,
@@ -119,7 +125,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
 
   override val tableName = "import_mails"
 
-  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "payment", "age", "nearest_station", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(im: SyntaxProvider[ImportMail])(rs: WrappedResultSet): ImportMail = apply(im.resultName)(rs)
   def apply(im: ResultName[ImportMail])(rs: WrappedResultSet): ImportMail = new ImportMail(
@@ -148,6 +154,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     tagText = rs.get(im.tagText),
     payment = rs.get(im.payment),
     age = rs.get(im.age),
+    paymentText = rs.get(im.paymentText),
+    ageText = rs.get(im.ageText),
     nearestStation = rs.get(im.nearestStation),
     createdAt = rs.get(im.createdAt),
     updatedAt = rs.get(im.updatedAt),
@@ -213,6 +221,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     tagText: Option[String] = None,
     payment: Option[Double] = None,
     age: Option[Int] = None,
+    paymentText: Option[String] = None,
+    ageText: Option[String] = None,
     nearestStation: Option[String] = None,
     createdAt: DateTime,
     updatedAt: DateTime,
@@ -247,6 +257,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.tagText,
         column.payment,
         column.age,
+        column.paymentText,
+        column.ageText,
         column.nearestStation,
         column.createdAt,
         column.updatedAt,
@@ -280,6 +292,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         tagText,
         payment,
         age,
+        paymentText,
+        ageText,
         nearestStation,
         createdAt,
         updatedAt,
@@ -317,6 +331,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
       tagText = tagText,
       payment = payment,
       age = age,
+      paymentText = paymentText,
+      ageText = ageText,
       nearestStation = nearestStation,
       createdAt = createdAt,
       updatedAt = updatedAt,
@@ -355,6 +371,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.tagText -> entity.tagText,
         column.payment -> entity.payment,
         column.age -> entity.age,
+        column.paymentText -> entity.paymentText,
+        column.ageText -> entity.ageText,
         column.nearestStation -> entity.nearestStation,
         column.createdAt -> entity.createdAt,
         column.updatedAt -> entity.updatedAt,
