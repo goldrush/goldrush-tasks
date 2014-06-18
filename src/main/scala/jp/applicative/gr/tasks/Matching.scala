@@ -22,11 +22,17 @@ class Matching {
         ImportMailEx.findLastId.map{ now_last_id =>
           	val days = SysConfigEx.targetDays
 		    val bizList = ImportMailEx.findBizOffers(last_id, now_last_id)
-		    val bpmTargetList = ImportMailEx.findBpMemberTargets(days)
-		    matching_in(bizList, bpmTargetList)
+		    if(bizList.nonEmpty) {
+			    val bpmTargetList = ImportMailEx.findBpMemberTargets(days)
+			    matching_in(bizList, bpmTargetList)
+		    }
 		    val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id)
-		    val bizTargetList = ImportMailEx.findBizOfferTargets(days)
-		    matching_in(bizTargetList, bpmList)
+		    if(bpmList.nonEmpty) {
+		    	val bizTargetList = ImportMailEx.findBizOfferTargets(days)
+		    	matching_in(bizTargetList, bpmList)
+		    }
+		    
+     		SysConfigEx.createOrUpdateLastId(now_last_id)
         }
     }
   }
