@@ -15,7 +15,7 @@ mappings in Universal <+= (packageBin in Compile, sourceDirectory ) map { (_, sr
     // we are using the reference.conf as default application.conf
     // the user can override settings here
     val conf = src / ".." / "project" / "scalikejdbc.properties"
-    conf -> "project/scalikejdbc.properties"
+    conf -> "project/scalikejdbc.properties.sample"
 }
 
 libraryDependencies ++= Seq(

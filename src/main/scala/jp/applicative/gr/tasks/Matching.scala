@@ -41,8 +41,8 @@ class Matching {
       biz.tagText.map{z:String =>
       	bpm.tagText.map{m:String =>
       		val checked = check(
-      		    z.split(",").map(_.toLowerCase()).toList.sorted,
-      		    m.split(",").map(_.toLowerCase()).toList.sorted)
+      		    z.split(",").map(_.toLowerCase()).toList.sorted.distinct,
+      		    m.split(",").map(_.toLowerCase()).toList.sorted.distinct)
       		val p = point(checked)
       		
       		if(p > 0) {
