@@ -23,12 +23,12 @@ class Matching {
           	val days = SysConfigEx.targetDays
 		    val bizList = ImportMailEx.findBizOffers(last_id, now_last_id)
 		    if(bizList.nonEmpty) {
-			    val bpmTargetList = ImportMailEx.findBpMemberTargets(days)
+			    val bpmTargetList = ImportMailEx.findBpMemberTargets(last_id, days)
 			    matching_in(bizList, bpmTargetList)
 		    }
 		    val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id)
 		    if(bpmList.nonEmpty) {
-		    	val bizTargetList = ImportMailEx.findBizOfferTargets(days)
+		    	val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)
 		    	matching_in(bizTargetList, bpmList)
 		    }
 		    
