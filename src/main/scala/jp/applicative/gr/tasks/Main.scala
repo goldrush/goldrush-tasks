@@ -2,6 +2,7 @@ package jp.applicative.gr.tasks
 
 import scalikejdbc._
 import java.io.FileNotFoundException
+import org.joda.time.DateTimeZone
 
 object Main {
 
@@ -41,6 +42,7 @@ object Main {
   }
     
   def main(args: Array[String]): Unit = {
+    DateTimeZone.setDefault(DateTimeZone.UTC)
     val (j , d) = loadSettings()
     Class.forName(j.driver)
     ConnectionPool.singleton(j.url, j.username, j.password)
