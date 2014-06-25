@@ -19,7 +19,7 @@ mappings in Universal <+= (packageBin in Compile, sourceDirectory ) map { (_, sr
 }
 
 libraryDependencies ++= Seq(
-  "org.scalikejdbc" %% "scalikejdbc"        % "2.0.+" withSources() withJavadoc(),
+  "org.scalikejdbc" %% "scalikejdbc"        % "2.0.2" withSources() withJavadoc(),
   "mysql" % "mysql-connector-java" % "5.1.6",
   "ch.qos.logback"  %  "logback-classic"    % "1.1.+",
   "org.scalikejdbc" % "scalikejdbc-test_2.10" % "2.0.+" % "test" withSources() withJavadoc(),
