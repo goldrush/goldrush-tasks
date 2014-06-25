@@ -8,121 +8,117 @@ class HelloWorldSpec extends FunSpec {
       assert(1+1 == 2)
     }
   }
-  describe("Matching.check") {
-    it("shold equals match strings lists"){
-      assert((new Matching).check(List("aa","bbb","cccc","xx"), List("bbb", "ccc","qqq", "aa")) == List("bbb"))
-      assert((new Matching).check(List("aa","bbb","cccc","xx").sorted, List("bbb", "ccc","qqq", "aa").sorted) == List("aa","bbb"))
-    }
-  }
+//  describe("Matching.check") {
+//    it("shold equals match strings lists"){
+//      assert((new Matching).check(List("aa","bbb","cccc","xx"), List("bbb", "ccc","qqq", "aa")) == List("bbb"))
+//      assert((new Matching).check(List("aa","bbb","cccc","xx").sorted, List("bbb", "ccc","qqq", "aa").sorted) == List("aa","bbb"))
+//    }
+//  }
   describe("Plural") {
     it("xxx"){
     	val plu = new PluralAnalyzer
     	for{
-     	  (a, b) <- plu.analyze(HelloWorldSpec.body)  
+     	  x <- plu.analyze(HelloWorldSpec.body)  
     	}{
+    	  println(x)
     	  //println(a.toInt.toString + " : " + b)
     	}
     }
     
-    it("yyy"){
-    	val plu = new PluralAnalyzer
-    	for{
-     	  x <- plu.split(HelloWorldSpec.body)  
-    	}{
-    	  for{
-    		(a, b) <- x  
-    	  } println(a.toInt.toString + " : " + b)
-    	  println()
-    	}
-      
-    }
+//    it("yyy"){
+//    	val plu = new PluralAnalyzer
+//    	for{
+//     	  x <- plu.split(HelloWorldSpec.body)  
+//    	}{
+//    	  for{
+//    		(a, b) <- x  
+//    	  } println(a.toInt.toString + " : " + b)
+//    	  println()
+//    	}
+//    	print("あああ".head)
+//    }
   }
 }
 
 object HelloWorldSpec {
   val body = """
-[PR] MarkeZine News 号外(2014.06.25) http://markezine.jp/
+本日10:00時点の案件情報を送信します。
 
-このメールはMarkeZineで会員登録をされた方にお送りしています。
-配信の停止は文末をご覧ください。
-━━━━━━━━━━━━━━━━━
+初回のみログイン画面が表示されます。
+その後はブラウザを閉じずにメール内のリンクをクリックすることにより再度のログインを省略することができます。
 
-受け身のコミュニケーションを
-SNS活用で能動的なものに変える
-「アクティブサポート」の効果とは？
+会社名    ：Ａｓｃｅｎｔ　Ｂｕｓｉｎｅｓｓ　Ｃｏｎｓｕｌｔｉｎｇ株式会社
+URL　　　 ：http://ascent-biz.com
+案件概要  ：金融（証券系）　Oracle DBA
+作業形態  ：常駐
+作業地域  ：関東 ／東京都
+作業場所  ：東京都中央区
+ＯＳ      ：
+ＤＢ      ：ORACLE
+言語      ：
+ハードウェア：
+ネットワーク：
+ツール      ：
+フレームワーク：
+参入時期  ：2014年7月〜
+年齢範囲  ：40歳まで
+予算      ：90万円以下
+社員区分  ：正社員,契約社員,個人技術者
+国籍      ：日本国籍
+業種      ：金融 ／証券業務
+職務      ：システムエンジニア（SE）,コンサルタント,インフラ（設計）,インフラ（構築）
+経験年数  ：11〜20年目
+コメント  ：担当：北村contact@acent-biz.com
 
-詳しい情報は以下から無料ダウンロード！
+詳細は以下のリンクをクリックしてください。
+リンク　　：http://www2.jiet.or.jp/JSM/JSM_014_00.asp?IssueNo=20140620008
 
-▼▽▼ダウンロードはこちら▼▽▼
-http://go2.shoeisha.jp/c/add4aeuctWr4u4ab
+登録者にメールを送信する場合は以下の返信を登録をクリックしてください。
+返信を登録：http://www2.jiet.or.jp/JSM/JSM_017_00.asp?IssueNo=20140620008
+-------------------------------------------------------------------------
 
-━━━━━━━━━━━━━━━━━
-こんにちは、MarkeZine編集部です。
+会社名    ：株式会社 システナ
+URL　　　 ：http://www.systena.co.jp
+案件概要  ：スマートフォン向けアプリ仕様検討
+作業形態  ：常駐
+作業地域  ：関東 ／東京都
+作業場所  ：蒲田
+ＯＳ      ：Android,iOS
+ＤＢ      ：
+言語      ：
+ハードウェア：
+ネットワーク：
+ツール      ：
+フレームワーク：
+参入時期  ：7月10日
+年齢範囲  ：45歳まで
+予算      ：80万円以下
+社員区分  ：正社員,契約社員,個人技術者
+国籍      ：日本国籍
+業種      ：
+職務      ：
+経験年数  ：4〜6年目
+コメント  ：
 
-お客様サポートといえば、多くの場合、
-電話などで寄せられる問合せへの対応がメイン業務になっています。
+詳細は以下のリンクをクリックしてください。
+リンク　　：http://www2.jiet.or.jp/JSM/JSM_014_00.asp?IssueNo=20140620003
 
-しかし、これは言い換えると
-「問い合わせがされないとコミュニケーションは始まらない」
-とても受動的な状態ともいえます。
+登録者にメールを送信する場合は以下の返信を登録をクリックしてください。
+返信を登録：http://www2.jiet.or.jp/JSM/JSM_017_00.asp?IssueNo=20140620003
+-------------------------------------------------------------------------
 
-一方、TwitterやFacebookに目を向ければ、問い合わせセンターには届かない
-商品やサービスへの疑問や意見が飛び交っています。
-彼らの声をきちんとキャッチすることができるか、できないか。
-企業にとっては大きな分かれ道となります。
 
-今回紹介する資料では、受け身のサポートに加え、
-能動的にソーシャルメディア上でユーザーごとに対話を試みる
-「アクティブサポート」開始に伴うプロジェクトを牽引したNTTドコモの担当者が
-その経緯と結果を語っています。
+リンク先情報を開くときは、Acrobat Readerソフト（無償）
+が必要になりますので、
+http://www.adobe.co.jp/products/acrobat/readstep.html
+からダウンロード後インストールしてご覧下さい。
 
-これからのサポート業務、顧客コミュニケーションを考える上で
-参考になる資料ですので、ぜひご覧ください！
-
-▼▽▼ 無料ダウンロードはこちらから ▼▽▼
-http://go2.shoeisha.jp/c/add4aeuctWr4u4ab
-
------------------------------------
-★資料概要
------------------------------------
-■タイトル
-【事例資料】NTTドコモが語る
-「アクティブサポート導入のポイントと効果」
-能動的なサポートで顧客満足度を向上するには？
-
-■概要
-本資料は、アクティブサポートを導入した、
-NTTドコモの事例を紹介する資料です。
-導入前の課題や結果が、わかりやすくまとめられています。
-従来、ドコモのサポート業務は、来店や問合せがスタートでした。
-ソーシャルメディアを使い能動的なサポートを行うことで、
-NTTドコモは顧客との関係はどのように変化したのか。
-これからの顧客コミュニケーションについて、お考えのかたには、
-非常に参考になる内容です。ぜひ、この機会にご覧ください！
-
-■トピック
-課題：多様化するモバイル環境のなかで新たなお客様サポートを実施
-経緯：最新のテクノロジーを活用した幅広い運営ノウハウの提供が決め手
-効果：現場と一体になってCS向上に手ごたえ
-今後：誠実さと人間味ある対応で新たなファン開拓へ
-
-▼▽▼ 無料ダウンロードはこちらから ▼▽▼
-http://go2.shoeisha.jp/c/add4aeuctWr4u4ab
-
-━━━━━━━━━━━━━━━━━
-配信停止の方法
-━━━━━━━━━━━━━━━━━
-1）SEメンバーシップの会員情報編集画面へジャンプ
-http://go2.shoeisha.jp/c/add4aeuctWr4u4ac
-
-2）配信停止したいメールニュースの欄にメールアドレスを入力後、
-[解除]ボタンをクリック
-
-・ニュースの内容は予告なしに変更される場合があります。
-・記事中の会社名、製品名は、弊社および各社の登録商標、商標です。
-・お問い合わせについては、 support@markezine.jp へご連絡ください。
-─────────────────
-発行:株式会社翔泳社 MarkeZine編集部
-(c)2006-2014 SHOEISHA. All rights reserved.
+＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+特定非営利活動法人
+日本情報技術取引所（ＪＩＥＴ）
+TEL03-6435-1261　FAX03-6435-0868
+E-Mail office@jiet.or.jp
+http://www2.jiet.or.jp
+＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
 """
 }
