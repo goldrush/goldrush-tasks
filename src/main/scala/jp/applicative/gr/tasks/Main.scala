@@ -42,7 +42,7 @@ object Main {
   }
     
   def main(args: Array[String]): Unit = {
-    DateTimeZone.setDefault(DateTimeZone.UTC)
+    java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"))
     val (j , d) = loadSettings()
     Class.forName(j.driver)
     ConnectionPool.singleton(j.url, j.username, j.password)
