@@ -68,6 +68,17 @@ case class PluralAnalyzer(t: Threshold) {
 
 }
 
+object PluralAnalyzer {
+	def default = PluralAnalyzer(Threshold(
+            delimiter = 10,
+            blockSize = 5,
+            compareLength = 10,
+            analyzeBlocks = 3,
+            distanceLimit = 10,
+            limitClearCount = 2))
+
+}
+
 private object Levenshtein {
   def calc(a: String, b: String): Int = {
     val d = Array.ofDim[Int](a.size + 1, b.size + 1)

@@ -32,6 +32,7 @@ class ImportMail(
   val paymentText: Option[String] = None,
   val ageText: Option[String] = None,
   val nearestStation: Option[String] = None,
+  val pluralFlg: Option[Int] = None,
   val createdAt: DateTime,
   val updatedAt: DateTime,
   val lockVersion: Option[Long] = None,
@@ -69,6 +70,7 @@ class ImportMail(
     paymentText: Option[String] = this.paymentText,
     ageText: Option[String] = this.ageText,
     nearestStation: Option[String] = this.nearestStation,
+    pluralFlg: Option[Int] = this.pluralFlg,
     createdAt: DateTime = this.createdAt,
     updatedAt: DateTime = this.updatedAt,
     lockVersion: Option[Long] = this.lockVersion,
@@ -105,6 +107,7 @@ class ImportMail(
       paymentText = paymentText,
       ageText = ageText,
       nearestStation = nearestStation,
+      pluralFlg = pluralFlg,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -125,7 +128,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
 
   override val tableName = "import_mails"
 
-  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "plural_flg", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(im: SyntaxProvider[ImportMail])(rs: WrappedResultSet): ImportMail = apply(im.resultName)(rs)
   def apply(im: ResultName[ImportMail])(rs: WrappedResultSet): ImportMail = new ImportMail(
@@ -157,6 +160,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     paymentText = rs.get(im.paymentText),
     ageText = rs.get(im.ageText),
     nearestStation = rs.get(im.nearestStation),
+    pluralFlg = rs.get(im.pluralFlg),
     createdAt = rs.get(im.createdAt),
     updatedAt = rs.get(im.updatedAt),
     lockVersion = rs.get(im.lockVersion),
@@ -224,6 +228,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     paymentText: Option[String] = None,
     ageText: Option[String] = None,
     nearestStation: Option[String] = None,
+    pluralFlg: Option[Int] = None,
     createdAt: DateTime,
     updatedAt: DateTime,
     lockVersion: Option[Long] = None,
@@ -260,6 +265,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.paymentText,
         column.ageText,
         column.nearestStation,
+        column.pluralFlg,
         column.createdAt,
         column.updatedAt,
         column.lockVersion,
@@ -295,6 +301,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         paymentText,
         ageText,
         nearestStation,
+        pluralFlg,
         createdAt,
         updatedAt,
         lockVersion,
@@ -334,6 +341,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
       paymentText = paymentText,
       ageText = ageText,
       nearestStation = nearestStation,
+      pluralFlg = pluralFlg,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -374,6 +382,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.paymentText -> entity.paymentText,
         column.ageText -> entity.ageText,
         column.nearestStation -> entity.nearestStation,
+        column.pluralFlg -> entity.pluralFlg,
         column.createdAt -> entity.createdAt,
         column.updatedAt -> entity.updatedAt,
         column.lockVersion -> entity.lockVersion,

@@ -13,6 +13,8 @@ class Matching {
   val goodTags = TagEx.goodTagSet
   val veryGoodTags = TagEx.veryGoodTagSet
   
+  val plu = PluralAnalyzer.default // TODO: sys_configs
+  
   def matching() {
     SysConfigEx.lastId match {
       case None => ImportMailEx.findLastId.map{ last_id =>
@@ -27,18 +29,20 @@ class Matching {
 			    val bpmTargetList = ImportMailEx.findBpMemberTargets(last_id, days)
 			    matching_in(bizList, bpmTargetList)
 		    }
+          	bizList.foreach(pluralAnalyze)
 		    val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id)
 		    if(bpmList.nonEmpty) {
 		    	val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)
 		    	matching_in(bizTargetList, bpmList)
 		    }
+          	bpmList.foreach(pluralAnalyze)
 		    
      		SysConfigEx.createOrUpdateLastId(now_last_id)
         }
     }
   }
   
-  def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
+  private def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
     for {
       biz <- bizList
       bpm <- bpmList
@@ -74,8 +78,50 @@ class Matching {
       }
     }
   }
+
+  private def pluralAnalyze(im: ImportMail) {
+    if (plu.isPlural(im.mailBody)) {
+      new ImportMail(
+      id = im.id,
+      ownerId = im.ownerId,
+      businessPartnerId = im.businessPartnerId,
+      bpPicId = im.bpPicId,
+      inReplyTo = im.inReplyTo,
+      deliveryMailId = im.deliveryMailId,
+      receivedAt = im.receivedAt,
+      mailSubject = im.mailSubject,
+      mailBody = im.mailBody,
+      mailFrom = im.mailFrom,
+      mailSenderName = im.mailSenderName,
+      mailTo = im.mailTo,
+      mailCc = im.mailCc,
+      mailBcc = im.mailBcc,
+      messageId = im.messageId,
+      bizOfferFlg = im.bizOfferFlg,
+      bpMemberFlg = im.bpMemberFlg,
+      registed = im.registed,
+      unwanted = im.unwanted,
+      properFlg = im.properFlg,
+      outflowMailFlg = im.outflowMailFlg,
+      starred = im.starred,
+      tagText = im.tagText,
+      payment = im.payment,
+      age = im.age,
+      paymentText = im.paymentText,
+      ageText = im.ageText,
+      nearestStation = im.nearestStation,
+      pluralFlg = Some(1),
+      createdAt = im.createdAt,
+      updatedAt = im.updatedAt,
+      lockVersion = im.lockVersion.map(_+1),
+      createdUser = im.createdUser,
+      updatedUser = Some("PluralAnalyze"),
+      deletedAt = im.deletedAt,
+      deleted = im.deleted).save
+    }
+  }
   
-  def point(list: List[String]):Int = list.map{ tag =>
+  private def point(list: List[String]):Int = list.map{ tag =>
   	if(goodTags.contains(tag)){
   	  4
   	}else if(veryGoodTags.contains(tag)){
@@ -85,7 +131,7 @@ class Matching {
   	}
   }.sum
   
-  def check(x: List[String], y: List[String]): List[String] = {
+  private def check(x: List[String], y: List[String]): List[String] = {
     (x, y) match {
       case (List(), _) => List()
       case (_, List()) => List()
@@ -100,5 +146,4 @@ class Matching {
 	}
   }
   
-  def point(x: String) = 5
 }
