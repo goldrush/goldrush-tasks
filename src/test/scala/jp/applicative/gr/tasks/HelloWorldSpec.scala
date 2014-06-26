@@ -16,16 +16,35 @@ class HelloWorldSpec extends FunSpec {
 //  }
   describe("Plural") {
     it("xxx"){
-    	val plu = new PluralAnalyzer
+        val plu = PluralAnalyzer(Threshold(
+            delimiter = 10,
+            blockSize = 5,
+            compareLength = 10,
+            analyzeBlocks = 3,
+            distanceLimit = 10,
+            limitClearCount = 2))
     	for{
      	  x <- plu.analyze(HelloWorldSpec.body)  
     	}{
     	  println(x)
     	  //println(a.toInt.toString + " : " + b)
     	}
+    	// println(plu.zenTrim("　　　案件番号　　　　　1406-2-2−3816 "))
     }
     
-//    it("yyy"){
+    it("yyy"){
+        val plu = PluralAnalyzer(Threshold(
+            delimiter = 10,
+            blockSize = 5,
+            compareLength = 10,
+            analyzeBlocks = 3,
+            distanceLimit = 10,
+            limitClearCount = 2))
+        println(plu.isPlural(HelloWorldSpec.body))
+      
+    }
+
+    //    it("yyy"){
 //    	val plu = new PluralAnalyzer
 //    	for{
 //     	  x <- plu.split(HelloWorldSpec.body)  

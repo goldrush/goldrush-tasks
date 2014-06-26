@@ -2,52 +2,73 @@ package jp.applicative.gr.tasks
 
 import scala.annotation.tailrec
 
-class PluralAnalyzer {
+case class Threshold(delimiter: Int, blockSize: Int, compareLength: Int, analyzeBlocks: Int, distanceLimit: Int, limitClearCount: Int)
+
+case class PluralAnalyzer(t: Threshold) {
+  
+  private def zenTrim(str: String): String = {
+    val f = (x:String) => x.toSeq.dropWhile((y:Char) => "　 \t\n".toSeq.contains(y)).mkString
+    val res = f(f(str).reverse).reverse
+    res
+  }
+  
+  private type ToDouble = {def toDouble: Double}
+  
   // standard deviation
-  private def sd(s: String): Double = {
-    val seq = s.toSeq.map(_.toDouble)
+  private def calcSd(s: Seq[Double]): Double = {
+    val seq = s
     val len = seq.length
     val avg = seq.sum / len
     return seq.map(x => (x - avg) * (x - avg)).sum / len
   }
 
-  private def lines_to_sd(lines: Seq[String]): Seq[Double] = lines.map(sd)
-
   private def body_to_sd(body: String): Seq[(Double, String)] = {
-    val lines = body.lines.toSeq.map(_.trim).filter(_ != "")
-    lines_to_sd(lines).zip(lines)
+//    body.lines.toSeq.map(x => zenTrim(x)).filter(_ != "").map(y => (sd(y), y))
+    body.lines.toSeq.map(x => zenTrim(x)).map(y => (calcSd(y.toSeq.map(_.toDouble)), y))
   }
 
-  def split(body: String): Seq[Seq[(Double, String)]] = {
-    val ana = body_to_sd(body)
-
+  private def split(body: String): Seq[Seq[String]] = {
     @tailrec
-    def f(n: Seq[Seq[(Double, String)]], x: Seq[(Double, String)]): Seq[Seq[(Double, String)]] = {
-      val (a, b) = x.span(_._1 > 10)
+    def f(n: Seq[Seq[String]], x: Seq[(Double, String)]): Seq[Seq[String]] = {
+      val (a, b) = x.span(_._1 > t.delimiter)
       if (b.size == 0) {
-        n
+        a.map(_._2) +: n
       } else {
-        f(a +: n, b.tail)
+        f(a.map(_._2) +: n, b.tail)
       }
     }
 
+    val ana = body_to_sd(body)
     f(Seq(), ana).reverse
   }
 
-  def analyze(body: String):Seq[(Int, String, String)] = {
-    def sp_initials(x: Seq[Seq[(Double, String)]]) = x.map(seq => seq.map(y => y._2.head).mkString)
+  def blocks(x: Seq[Seq[String]]): Seq[(String, String)] = x.map(seq => (seq.map(_.head).mkString, seq.mkString("\n")))
 
-    val sp = sp_initials(split(body))
+  def analyze(body: String):Seq[(Int, String, String)] = {
+
+    val sp:Seq[String] = blocks(split(body)).map(_._1)
     for {
-      a <- sp
-      b <- sp
-      if a != b
-    } yield {(Levenshtein.calc(a,b), a, b)}
+      (a::as) <- sp.tails.toSeq
+      b <- as
+      if (a != "" && b != "")
+      if (a.length() > t.blockSize && b.length() > t.blockSize)
+    } yield {
+      (Levenshtein.calc(a.take(t.compareLength),b.take(t.compareLength)), a, b)
+    }
+  }
+  
+  def isPlural(body: String):Boolean = {
+    val ana = analyze(body)
+    if (ana.length < t.analyzeBlocks) return false
+    
+    val seq = ana.map(x => x._1)
+    seq.filter( _ < t.distanceLimit).size >= t.limitClearCount
+    
   }
 
 }
 
-object Levenshtein {
+private object Levenshtein {
   def calc(a: String, b: String): Int = {
     val d = Array.ofDim[Int](a.size + 1, b.size + 1)
 
