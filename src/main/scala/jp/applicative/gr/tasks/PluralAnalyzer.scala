@@ -1,10 +1,13 @@
 package jp.applicative.gr.tasks
 
 import scala.annotation.tailrec
+import org.slf4j._
 
 case class Threshold(delimiter: Int, blockSize: Int, compareLength: Int, analyzeBlocks: Int, distanceLimit: Int, limitClearCount: Int)
 
 case class PluralAnalyzer(t: Threshold) {
+  
+  private val log = LoggerFactory.getLogger(this.getClass())
   
   private def zenTrim(str: String): String = {
     val f = (x:String) => x.toSeq.dropWhile((y:Char) => "　 \t\n".toSeq.contains(y)).mkString
@@ -59,6 +62,7 @@ case class PluralAnalyzer(t: Threshold) {
   
   def isPlural(body: String):Boolean = {
     val ana = analyze(body)
+    //ana.foreach(x => log.debug(x.toString))
     if (ana.length < t.analyzeBlocks) return false
     
     val seq = ana.map(x => x._1)

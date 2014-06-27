@@ -26,7 +26,7 @@ class HelloWorldSpec extends FunSpec {
     	for{
      	  x <- plu.analyze(HelloWorldSpec.body)  
     	}{
-    	  println(x)
+    	  //println(x)
     	  //println(a.toInt.toString + " : " + b)
     	}
     	// println(plu.zenTrim("　　　案件番号　　　　　1406-2-2−3816 "))

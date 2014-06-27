@@ -6,8 +6,12 @@ import jp.applicative.gr.models.ex._
 import org.joda.time.DateTime
 import scalikejdbc.AutoSession
 import org.joda.time.DateTimeZone
+import org.slf4j.LoggerFactory
 
 class Matching {
+
+  private val log = LoggerFactory.getLogger(this.getClass())
+
   implicit val session = AutoSession
   
   val goodTags = TagEx.goodTagSet
@@ -24,18 +28,20 @@ class Matching {
       case Some(last_id) =>
         ImportMailEx.findLastId.map{ now_last_id =>
           	val days = SysConfigEx.targetDays
-		    val bizList = ImportMailEx.findBizOffers(last_id, now_last_id)
+          	
+          	// 前回処理から追加された案件メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
+		    val bizList = ImportMailEx.findBizOffers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
 		    if(bizList.nonEmpty) {
 			    val bpmTargetList = ImportMailEx.findBpMemberTargets(last_id, days)
 			    matching_in(bizList, bpmTargetList)
 		    }
-          	bizList.foreach(pluralAnalyze)
-		    val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id)
+          	
+          	// 前回処理から追加された人材メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
+		    val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
 		    if(bpmList.nonEmpty) {
 		    	val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)
 		    	matching_in(bizTargetList, bpmList)
 		    }
-          	bpmList.foreach(pluralAnalyze)
 		    
      		SysConfigEx.createOrUpdateLastId(now_last_id)
         }
@@ -79,8 +85,12 @@ class Matching {
     }
   }
 
-  private def pluralAnalyze(im: ImportMail) {
+  /**
+   * 複数件フラグを立ててDB保存しつつ、フラグ処理後のImportMailを返す(破壊的)
+   */
+  def pluralAnalyze(im: ImportMail):ImportMail = {
     if (plu.isPlural(im.mailBody)) {
+      log.debug("isPlural: " + im.id)
       new ImportMail(
       id = im.id,
       ownerId = im.ownerId,
@@ -118,7 +128,7 @@ class Matching {
       updatedUser = Some("PluralAnalyze"),
       deletedAt = im.deletedAt,
       deleted = im.deleted).save
-    }
+    }else im
   }
   
   private def point(list: List[String]):Int = list.map{ tag =>
