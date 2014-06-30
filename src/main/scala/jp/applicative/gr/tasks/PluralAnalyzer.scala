@@ -77,9 +77,9 @@ object PluralAnalyzer {
             delimiter = 10,
             blockSize = 5,
             compareLength = 10,
-            analyzeBlocks = 3,
+            analyzeBlocks = 0,
             distanceLimit = 10,
-            limitClearCount = 2))
+            limitClearCount = 1))
 
 }
 

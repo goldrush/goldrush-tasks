@@ -22,11 +22,11 @@ class HelloWorldSpec extends FunSpec {
             compareLength = 10,
             analyzeBlocks = 3,
             distanceLimit = 10,
-            limitClearCount = 2))
+            limitClearCount = 1))
     	for{
      	  x <- plu.analyze(HelloWorldSpec.body)  
     	}{
-    	  //println(x)
+    	  println(x)
     	  //println(a.toInt.toString + " : " + b)
     	}
     	// println(plu.zenTrim("　　　案件番号　　　　　1406-2-2−3816 "))
@@ -37,9 +37,9 @@ class HelloWorldSpec extends FunSpec {
             delimiter = 10,
             blockSize = 5,
             compareLength = 10,
-            analyzeBlocks = 3,
+            analyzeBlocks = 0,
             distanceLimit = 10,
-            limitClearCount = 2))
+            limitClearCount = 1))
         println(plu.isPlural(HelloWorldSpec.body))
       
     }
