@@ -6,12 +6,18 @@ import jp.applicative.gr.models.ex._
 import org.joda.time.DateTime
 import scalikejdbc.AutoSession
 import org.joda.time.DateTimeZone
+import org.slf4j.LoggerFactory
 
 class Matching {
+
+  private val log = LoggerFactory.getLogger(this.getClass())
+
   implicit val session = AutoSession
   
   val goodTags = TagEx.goodTagSet
   val veryGoodTags = TagEx.veryGoodTagSet
+  
+  val plu = PluralAnalyzer.default // TODO: sys_configs
   
   def matching() {
     SysConfigEx.lastId match {
@@ -22,12 +28,16 @@ class Matching {
       case Some(last_id) =>
         ImportMailEx.findLastId.map{ now_last_id =>
           	val days = SysConfigEx.targetDays
-		    val bizList = ImportMailEx.findBizOffers(last_id, now_last_id)
+          	
+          	// 前回処理から追加された案件メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
+		    val bizList = ImportMailEx.findBizOffers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
 		    if(bizList.nonEmpty) {
 			    val bpmTargetList = ImportMailEx.findBpMemberTargets(last_id, days)
 			    matching_in(bizList, bpmTargetList)
 		    }
-		    val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id)
+          	
+          	// 前回処理から追加された人材メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
+		    val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
 		    if(bpmList.nonEmpty) {
 		    	val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)
 		    	matching_in(bizTargetList, bpmList)
@@ -38,7 +48,7 @@ class Matching {
     }
   }
   
-  def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
+  private def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
     for {
       biz <- bizList
       bpm <- bpmList
@@ -74,8 +84,54 @@ class Matching {
       }
     }
   }
+
+  /**
+   * 複数件フラグを立ててDB保存しつつ、フラグ処理後のImportMailを返す(破壊的)
+   */
+  def pluralAnalyze(im: ImportMail):ImportMail = {
+    if (plu.isPlural(im.mailBody)) {
+      log.debug("isPlural: " + im.id)
+      new ImportMail(
+      id = im.id,
+      ownerId = im.ownerId,
+      businessPartnerId = im.businessPartnerId,
+      bpPicId = im.bpPicId,
+      inReplyTo = im.inReplyTo,
+      deliveryMailId = im.deliveryMailId,
+      receivedAt = im.receivedAt,
+      mailSubject = im.mailSubject,
+      mailBody = im.mailBody,
+      mailFrom = im.mailFrom,
+      mailSenderName = im.mailSenderName,
+      mailTo = im.mailTo,
+      mailCc = im.mailCc,
+      mailBcc = im.mailBcc,
+      messageId = im.messageId,
+      bizOfferFlg = im.bizOfferFlg,
+      bpMemberFlg = im.bpMemberFlg,
+      registed = im.registed,
+      unwanted = im.unwanted,
+      properFlg = im.properFlg,
+      outflowMailFlg = im.outflowMailFlg,
+      starred = im.starred,
+      tagText = im.tagText,
+      payment = im.payment,
+      age = im.age,
+      paymentText = im.paymentText,
+      ageText = im.ageText,
+      nearestStation = im.nearestStation,
+      pluralFlg = Some(1),
+      createdAt = im.createdAt,
+      updatedAt = im.updatedAt,
+      lockVersion = im.lockVersion.map(_+1),
+      createdUser = im.createdUser,
+      updatedUser = Some("PluralAnalyze"),
+      deletedAt = im.deletedAt,
+      deleted = im.deleted).save
+    }else im
+  }
   
-  def point(list: List[String]):Int = list.map{ tag =>
+  private def point(list: List[String]):Int = list.map{ tag =>
   	if(goodTags.contains(tag)){
   	  4
   	}else if(veryGoodTags.contains(tag)){
@@ -85,7 +141,7 @@ class Matching {
   	}
   }.sum
   
-  def check(x: List[String], y: List[String]): List[String] = {
+  private def check(x: List[String], y: List[String]): List[String] = {
     (x, y) match {
       case (List(), _) => List()
       case (_, List()) => List()
@@ -100,5 +156,4 @@ class Matching {
 	}
   }
   
-  def point(x: String) = 5
 }
