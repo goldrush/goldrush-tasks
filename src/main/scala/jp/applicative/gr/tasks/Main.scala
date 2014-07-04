@@ -51,19 +51,20 @@ object Main {
     val (j, d) = loadSettings()
     Class.forName(j.driver)
     ConnectionPool.singleton(j.url, j.username, j.password)
-    val session = AutoSession
+    implicit val session = AutoSession
 
-    val m = new DeliveryMailMatching
-
+    val imm = new ImportMailMatching
     args.toList match {
-      case "pluralAll" :: _ => 
-	    Stream.from(0).foreach { i => 
-	      val list = ImportMailEx.findAllByPage(i)
-	      if(list.isEmpty) return
-	      list.foreach(im => m.pluralAnalyze(im))
-	    }
+      case "pluralAll" :: _ =>
+        Stream.from(0).foreach { i =>
+          val list = ImportMailEx.findAllByPage(i)
+          if (list.isEmpty) return
+          list.foreach(im => imm.pluralAnalyze(im))
+        }
       case _ =>
-        m.matching
+        val last_id = imm.matching
+        val dmm = new DeliveryMailMatching
+        dmm.matching(last_id)
     }
   }
 
