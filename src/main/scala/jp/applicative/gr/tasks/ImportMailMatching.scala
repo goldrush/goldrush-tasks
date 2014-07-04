@@ -8,20 +8,19 @@ import scalikejdbc.AutoSession
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 
-class ImportMailMatching {
+class ImportMailMatching(implicit session: DBSession) {
 
   private val log = LoggerFactory.getLogger(this.getClass())
 
   val util = new MatchingUtil
 
-  implicit val session = AutoSession
-
-  def matching() {
+  def matching(): Long = {
     SysConfigEx.lastId match {
       case None => ImportMailEx.findLastId.map { last_id =>
         SysConfigEx.createLastId(last_id)
-        println("初めての実行です。過去分を無視します")
-      }
+        log.info("初めての実行です。過去分を無視します")
+        last_id
+      }.getOrElse(0)
       case Some(last_id) =>
         ImportMailEx.findLastId.map { now_last_id =>
           val days = SysConfigEx.importMailTargetDays
@@ -41,7 +40,8 @@ class ImportMailMatching {
           }
 
           SysConfigEx.createOrUpdateLastId(now_last_id)
-        }
+          now_last_id
+        }.getOrElse(last_id)
     }
   }
 
@@ -67,6 +67,7 @@ class ImportMailMatching {
               tagText = Some(checked.mkString(",")),
               paymentGap = biz.payment.flatMap(x => bpm.payment.map(y => x - y)),
               ageGap = biz.age.flatMap(x => bpm.age.map(y => x - y)),
+              receivedAt = (if(biz.receivedAt.compareTo(bpm.receivedAt) < 0){biz.receivedAt}else{bpm.receivedAt}),
               createdAt = now,
               updatedAt = now,
               lockVersion = Some(0),

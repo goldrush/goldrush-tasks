@@ -12,6 +12,8 @@ case class ImportMailMatch(
   tagText: Option[String] = None, 
   paymentGap: Option[Double] = None, 
   ageGap: Option[Int] = None, 
+  starred: Option[Int] = None, 
+  receivedAt: DateTime, 
   createdAt: DateTime, 
   updatedAt: DateTime, 
   lockVersion: Option[Long] = None, 
@@ -31,7 +33,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
 
   override val tableName = "import_mail_matches"
 
-  override val columns = Seq("id", "owner_id", "biz_offer_mail_id", "bp_member_mail_id", "mail_match_score", "tag_text", "payment_gap", "age_gap", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "biz_offer_mail_id", "bp_member_mail_id", "mail_match_score", "tag_text", "payment_gap", "age_gap", "starred", "received_at", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(imm: SyntaxProvider[ImportMailMatch])(rs: WrappedResultSet): ImportMailMatch = apply(imm.resultName)(rs)
   def apply(imm: ResultName[ImportMailMatch])(rs: WrappedResultSet): ImportMailMatch = new ImportMailMatch(
@@ -43,6 +45,8 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
     tagText = rs.get(imm.tagText),
     paymentGap = rs.get(imm.paymentGap),
     ageGap = rs.get(imm.ageGap),
+    starred = rs.get(imm.starred),
+    receivedAt = rs.get(imm.receivedAt),
     createdAt = rs.get(imm.createdAt),
     updatedAt = rs.get(imm.updatedAt),
     lockVersion = rs.get(imm.lockVersion),
@@ -90,6 +94,8 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
     tagText: Option[String] = None,
     paymentGap: Option[Double] = None,
     ageGap: Option[Int] = None,
+    starred: Option[Int] = None,
+    receivedAt: DateTime,
     createdAt: DateTime,
     updatedAt: DateTime,
     lockVersion: Option[Long] = None,
@@ -106,6 +112,8 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         column.tagText,
         column.paymentGap,
         column.ageGap,
+        column.starred,
+        column.receivedAt,
         column.createdAt,
         column.updatedAt,
         column.lockVersion,
@@ -121,6 +129,8 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         tagText,
         paymentGap,
         ageGap,
+        starred,
+        receivedAt,
         createdAt,
         updatedAt,
         lockVersion,
@@ -140,6 +150,8 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
       tagText = tagText,
       paymentGap = paymentGap,
       ageGap = ageGap,
+      starred = starred,
+      receivedAt = receivedAt,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -160,6 +172,8 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         column.tagText -> entity.tagText,
         column.paymentGap -> entity.paymentGap,
         column.ageGap -> entity.ageGap,
+        column.starred -> entity.starred,
+        column.receivedAt -> entity.receivedAt,
         column.createdAt -> entity.createdAt,
         column.updatedAt -> entity.updatedAt,
         column.lockVersion -> entity.lockVersion,

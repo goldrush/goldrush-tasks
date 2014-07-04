@@ -8,13 +8,11 @@ import scalikejdbc.AutoSession
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 
-class DeliveryMailMatching {
+class DeliveryMailMatching(implicit session: DBSession) {
 
   private val log = LoggerFactory.getLogger(this.getClass())
 
   val util = new MatchingUtil
-
-  implicit val session = AutoSession
 
   private def matching_in(d: DeliveryMail, im: ImportMail) {
     d.tagText.map { (z: String) =>
@@ -46,25 +44,30 @@ class DeliveryMailMatching {
       }
 
     }
-
-    def matching() {
-      val days: Int = SysConfigEx.deliveryMailTargetDays
-      val last_id: Long = ImportMailEx.findLastId.getOrElse(0)
-      for {
-        d <- DeliveryMailEx.findBizOfferMails(days)
-      } {
-        val list = ImportMailEx.findBpMembersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, days)
-        list.foreach(matching_in(d, _))
-        DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
-      }
-      for {
-        d <- DeliveryMailEx.findBpMemberMails(days)
-      } {
-        val list = ImportMailEx.findBizOffersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, days)
-        list.foreach(matching_in(d, _))
-        DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
-      }
-    }
   }
 
+  def matching(last_id: Long) {
+    // 配信メールを取得する対象となる日数を取得
+    val days: Int = SysConfigEx.deliveryMailTargetDays
+    // 配信メールにぶつける取込メールの取得日数(取込メール自動マッチングと共用)
+    val importMailDays: Int = SysConfigEx.importMailTargetDays
+    //val last_id: Long = ImportMailEx.findLastId.getOrElse(0)
+    log.debug("start DeliveryMailMatching")
+    for {
+      d <- DeliveryMailEx.findBizOfferMails(days)
+    } {
+      log.debug("biz:" + d.id)
+      val list = ImportMailEx.findBpMembersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
+      list.foreach(matching_in(d, _))
+      DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
+    }
+    for {
+      d <- DeliveryMailEx.findBpMemberMails(days)
+    } {
+      log.debug("bpm:" + d.id)
+      val list = ImportMailEx.findBizOffersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
+      list.foreach(matching_in(d, _))
+      DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
+    }
+  }
 }
