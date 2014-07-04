@@ -67,6 +67,7 @@ class ImportMailMatching(implicit session: DBSession) {
               tagText = Some(checked.mkString(",")),
               paymentGap = biz.payment.flatMap(x => bpm.payment.map(y => x - y)),
               ageGap = biz.age.flatMap(x => bpm.age.map(y => x - y)),
+              starred = Some(0),
               receivedAt = (if(biz.receivedAt.compareTo(bpm.receivedAt) < 0){biz.receivedAt}else{bpm.receivedAt}),
               createdAt = now,
               updatedAt = now,

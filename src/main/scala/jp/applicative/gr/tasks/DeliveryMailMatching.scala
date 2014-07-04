@@ -32,7 +32,7 @@ class DeliveryMailMatching(implicit session: DBSession) {
             tagText = Some(checked.mkString(",")),
             paymentGap = d.payment.flatMap(x => im.payment.map(y => x - y)),
             ageGap = d.age.flatMap(x => im.age.map(y => x - y)),
-            starred = None,
+            starred = Some(0),
             createdAt = now,
             updatedAt = now,
             lockVersion = Some(0),
