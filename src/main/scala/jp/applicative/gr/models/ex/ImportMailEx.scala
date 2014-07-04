@@ -12,11 +12,11 @@ object ImportMailEx {
   def findBpMembers(last_id:Long, now_last_id: Long)(implicit session: DBSession) = ImportMail.findAllBy(sqls.gt(im.id, last_id).and.le(im.id, now_last_id).and.eq(im.deleted, 0).and.eq(im.bpMemberFlg, 1).orderBy(im.id).desc)
 
   def findBizOffersOrDays(last_id:Long, now_last_id: Long, days: Int)(implicit session: DBSession) = ImportMail.findAllBy(
-      sqls.gt(im.id, last_id).and.le(im.id, now_last_id).and.eq(im.deleted, 0).and.eq(im.bizOfferFlg, 1)
+      sqls.gt(im.id, last_id).and.le(im.id, now_last_id).and.eq(im.pluralFlg, 0).and.eq(im.deleted, 0).and.eq(im.bizOfferFlg, 1)
       .and.gt(im.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days)).orderBy(im.id).desc)
 
   def findBpMembersOrDays(last_id:Long, now_last_id: Long, days: Int)(implicit session: DBSession) = ImportMail.findAllBy(
-      sqls.gt(im.id, last_id).and.le(im.id, now_last_id).and.eq(im.deleted, 0).and.eq(im.bpMemberFlg, 1)
+      sqls.gt(im.id, last_id).and.le(im.id, now_last_id).and.eq(im.pluralFlg, 0).and.eq(im.deleted, 0).and.eq(im.bpMemberFlg, 1)
       .and.gt(im.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days)).orderBy(im.id).desc)
 
   def findBizOfferTargets(last_id:Long, days: Int)(implicit session: DBSession) = ImportMail.findAllBy(sqls.eq(im.deleted, 0)
