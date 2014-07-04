@@ -53,7 +53,7 @@ object Main {
     ConnectionPool.singleton(j.url, j.username, j.password)
     val session = AutoSession
 
-    val m = new Matching
+    val m = new DeliveryMailMatching
 
     args.toList match {
       case "pluralAll" :: _ => 

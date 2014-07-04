@@ -19,8 +19,10 @@ object SysConfigEx {
     findLastId.flatMap(x => x.value1).map(_.toLong)
   }
   
-  def targetDays(implicit session: DBSession): Int = findSectionKey("import_mail_matches", "target_days").flatMap(_.value1.map(_.toInt)).getOrElse(3)
-  
+  def importMailTargetDays(implicit session: DBSession): Int = findSectionKey("import_mail_matches", "target_days").flatMap(_.value1.map(_.toInt)).getOrElse(3)
+
+  def deliveryMailTargetDays(implicit session: DBSession): Int = findSectionKey("delivery_mail_matches", "target_days").flatMap(_.value1.map(_.toInt)).getOrElse(3)
+
   def createOrUpdateLastId(last_id: Long)(implicit session: DBSession) {
     findLastId() match {
       case Some(conf) =>
