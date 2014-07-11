@@ -27,6 +27,8 @@ class MatchingUtil {
   	}
   }.sum
   
+  def normalizeTagList(x: String): List[String] = x.split(",").map(_.toLowerCase()).toList.sorted.distinct 
+  
   def check(x: String, y: String): List[String] = {
     def check_in(as: List[String], bs: List[String]): List[String] = {
      (as, bs) match {
@@ -42,8 +44,7 @@ class MatchingUtil {
 	    }
 	}
     }
-    check_in(x.split(",").map(_.toLowerCase()).toList.sorted.distinct,
-     y.split(",").map(_.toLowerCase()).toList.sorted.distinct)
+    check_in(normalizeTagList(x), normalizeTagList(y))
   }
  
 }

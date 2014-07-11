@@ -52,7 +52,7 @@ class DeliveryMailMatching(implicit session: DBSession) {
     // 配信メールにぶつける取込メールの取得日数(取込メール自動マッチングと共用)
     val importMailDays: Int = SysConfigEx.importMailTargetDays
     //val last_id: Long = ImportMailEx.findLastId.getOrElse(0)
-    log.debug("start DeliveryMailMatching")
+    log.info("start")
     for {
       d <- DeliveryMailEx.findBizOfferMails(days)
     } {

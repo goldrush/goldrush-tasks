@@ -27,6 +27,7 @@ class ImportMail(
   val outflowMailFlg: Option[Int] = None,
   val starred: Option[Int] = None,
   val tagText: Option[String] = None,
+  val subjectTagText: Option[String] = None,
   val payment: Option[Double] = None,
   val age: Option[Int] = None,
   val paymentText: Option[String] = None,
@@ -65,6 +66,7 @@ class ImportMail(
     outflowMailFlg: Option[Int] = this.outflowMailFlg,
     starred: Option[Int] = this.starred,
     tagText: Option[String] = this.tagText,
+    subjectTagText: Option[String] = this.subjectTagText,
     payment: Option[Double] = this.payment,
     age: Option[Int] = this.age,
     paymentText: Option[String] = this.paymentText,
@@ -102,6 +104,7 @@ class ImportMail(
       outflowMailFlg = outflowMailFlg,
       starred = starred,
       tagText = tagText,
+      subjectTagText = subjectTagText,
       payment = payment,
       age = age,
       paymentText = paymentText,
@@ -128,7 +131,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
 
   override val tableName = "import_mails"
 
-  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "plural_flg", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "subject_tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "plural_flg", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(im: SyntaxProvider[ImportMail])(rs: WrappedResultSet): ImportMail = apply(im.resultName)(rs)
   def apply(im: ResultName[ImportMail])(rs: WrappedResultSet): ImportMail = new ImportMail(
@@ -155,6 +158,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     outflowMailFlg = rs.get(im.outflowMailFlg),
     starred = rs.get(im.starred),
     tagText = rs.get(im.tagText),
+    subjectTagText = rs.get(im.subjectTagText),
     payment = rs.get(im.payment),
     age = rs.get(im.age),
     paymentText = rs.get(im.paymentText),
@@ -223,6 +227,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     outflowMailFlg: Option[Int] = None,
     starred: Option[Int] = None,
     tagText: Option[String] = None,
+    subjectTagText: Option[String] = None,
     payment: Option[Double] = None,
     age: Option[Int] = None,
     paymentText: Option[String] = None,
@@ -260,6 +265,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.outflowMailFlg,
         column.starred,
         column.tagText,
+        column.subjectTagText,
         column.payment,
         column.age,
         column.paymentText,
@@ -296,6 +302,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         outflowMailFlg,
         starred,
         tagText,
+        subjectTagText,
         payment,
         age,
         paymentText,
@@ -336,6 +343,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
       outflowMailFlg = outflowMailFlg,
       starred = starred,
       tagText = tagText,
+      subjectTagText = subjectTagText,
       payment = payment,
       age = age,
       paymentText = paymentText,
@@ -377,6 +385,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.outflowMailFlg -> entity.outflowMailFlg,
         column.starred -> entity.starred,
         column.tagText -> entity.tagText,
+        column.subjectTagText -> entity.subjectTagText,
         column.payment -> entity.payment,
         column.age -> entity.age,
         column.paymentText -> entity.paymentText,

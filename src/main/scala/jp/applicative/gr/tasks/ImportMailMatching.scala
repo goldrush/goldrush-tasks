@@ -15,6 +15,7 @@ class ImportMailMatching(implicit session: DBSession) {
   val util = new MatchingUtil
 
   def matching(): Long = {
+    log.info("start")
     SysConfigEx.lastId match {
       case None => ImportMailEx.findLastId.map { last_id =>
         SysConfigEx.createLastId(last_id)
@@ -25,16 +26,20 @@ class ImportMailMatching(implicit session: DBSession) {
         ImportMailEx.findLastId.map { now_last_id =>
           val days = SysConfigEx.importMailTargetDays
 
+          log.info("find bizOffers")
           // 前回処理から追加された案件メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
           val bizList = ImportMailEx.findBizOffers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bizList.nonEmpty) {
+        	log.info("matching bizOffers to bpMembers")
             val bpmTargetList = ImportMailEx.findBpMemberTargets(last_id, days)
             matching_in(bizList, bpmTargetList)
           }
 
+          log.info("find bpMembers")
           // 前回処理から追加された人材メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
           val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bpmList.nonEmpty) {
+        	log.info("matching bpMembers to bizOffers")
             val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)
             matching_in(bizTargetList, bpmList)
           }
@@ -46,6 +51,19 @@ class ImportMailMatching(implicit session: DBSession) {
   }
 
   private def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
+    /**
+     * 件名タグが存在する && 有効なタグ
+     *   -> 人材側のタグにそのタグが存在する  = 2
+     *   -> 人材側のタグにそのタグが存在しない  = 0
+     * 有効な件名タグが存在しない = 1
+     */
+    def subjectTagMatchinFlg(subjectTagText: Option[String], m: String): Some[Int] = Some(subjectTagText match {
+      case Some(x) =>
+        if (util.point(util.normalizeTagList(x)) > 0) {
+          if (util.check(x, m).isEmpty) 0 else 2
+        } else 1
+      case None => 1
+    })
     for {
       biz <- bizList
       bpm <- bpmList
@@ -65,10 +83,11 @@ class ImportMailMatching(implicit session: DBSession) {
               bpMemberMailId = bpm.id,
               mailMatchScore = Some(p),
               tagText = Some(checked.mkString(",")),
+              subjectTagMatchFlg = subjectTagMatchinFlg(biz.subjectTagText, m),
               paymentGap = biz.payment.flatMap(x => bpm.payment.map(y => x - y)),
               ageGap = biz.age.flatMap(x => bpm.age.map(y => x - y)),
               starred = Some(0),
-              receivedAt = (if(biz.receivedAt.compareTo(bpm.receivedAt) < 0){biz.receivedAt}else{bpm.receivedAt}),
+              receivedAt = (if (biz.receivedAt.compareTo(bpm.receivedAt) < 0) { biz.receivedAt } else { bpm.receivedAt }),
               createdAt = now,
               updatedAt = now,
               lockVersion = Some(0),
@@ -87,7 +106,7 @@ class ImportMailMatching(implicit session: DBSession) {
    */
   def pluralAnalyze(im: ImportMail): ImportMail = {
     if (util.isPlural(im.mailBody)) {
-      log.debug("isPlural: " + im.id)
+      //log.debug("isPlural: " + im.id)
       new ImportMail(
         id = im.id,
         ownerId = im.ownerId,
@@ -112,6 +131,7 @@ class ImportMailMatching(implicit session: DBSession) {
         outflowMailFlg = im.outflowMailFlg,
         starred = im.starred,
         tagText = im.tagText,
+        subjectTagText = im.subjectTagText,
         payment = im.payment,
         age = im.age,
         paymentText = im.paymentText,
