@@ -10,6 +10,7 @@ case class ImportMailMatch(
   bpMemberMailId: Long, 
   mailMatchScore: Option[Long] = None, 
   tagText: Option[String] = None, 
+  subjectTagMatchFlg: Option[Int] = None, 
   paymentGap: Option[Double] = None, 
   ageGap: Option[Int] = None, 
   starred: Option[Int] = None, 
@@ -33,7 +34,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
 
   override val tableName = "import_mail_matches"
 
-  override val columns = Seq("id", "owner_id", "biz_offer_mail_id", "bp_member_mail_id", "mail_match_score", "tag_text", "payment_gap", "age_gap", "starred", "received_at", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "biz_offer_mail_id", "bp_member_mail_id", "mail_match_score", "tag_text", "subject_tag_match_flg", "payment_gap", "age_gap", "starred", "received_at", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(imm: SyntaxProvider[ImportMailMatch])(rs: WrappedResultSet): ImportMailMatch = apply(imm.resultName)(rs)
   def apply(imm: ResultName[ImportMailMatch])(rs: WrappedResultSet): ImportMailMatch = new ImportMailMatch(
@@ -43,6 +44,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
     bpMemberMailId = rs.get(imm.bpMemberMailId),
     mailMatchScore = rs.get(imm.mailMatchScore),
     tagText = rs.get(imm.tagText),
+    subjectTagMatchFlg = rs.get(imm.subjectTagMatchFlg),
     paymentGap = rs.get(imm.paymentGap),
     ageGap = rs.get(imm.ageGap),
     starred = rs.get(imm.starred),
@@ -92,6 +94,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
     bpMemberMailId: Long,
     mailMatchScore: Option[Long] = None,
     tagText: Option[String] = None,
+    subjectTagMatchFlg: Option[Int] = None,
     paymentGap: Option[Double] = None,
     ageGap: Option[Int] = None,
     starred: Option[Int] = None,
@@ -110,6 +113,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         column.bpMemberMailId,
         column.mailMatchScore,
         column.tagText,
+        column.subjectTagMatchFlg,
         column.paymentGap,
         column.ageGap,
         column.starred,
@@ -127,6 +131,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         bpMemberMailId,
         mailMatchScore,
         tagText,
+        subjectTagMatchFlg,
         paymentGap,
         ageGap,
         starred,
@@ -148,6 +153,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
       bpMemberMailId = bpMemberMailId,
       mailMatchScore = mailMatchScore,
       tagText = tagText,
+      subjectTagMatchFlg = subjectTagMatchFlg,
       paymentGap = paymentGap,
       ageGap = ageGap,
       starred = starred,
@@ -170,6 +176,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         column.bpMemberMailId -> entity.bpMemberMailId,
         column.mailMatchScore -> entity.mailMatchScore,
         column.tagText -> entity.tagText,
+        column.subjectTagMatchFlg -> entity.subjectTagMatchFlg,
         column.paymentGap -> entity.paymentGap,
         column.ageGap -> entity.ageGap,
         column.starred -> entity.starred,

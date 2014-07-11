@@ -26,7 +26,6 @@ case class PluralAnalyzer(t: Threshold) {
   }
 
   private def body_to_sd(body: String): Seq[(Double, String)] = {
-//    body.lines.toSeq.map(x => zenTrim(x)).filter(_ != "").map(y => (sd(y), y))
     body.lines.toSeq.map(x => zenTrim(x)).map(y => (calcSd(y.toSeq.map(_.toDouble)), y))
   }
 
@@ -42,6 +41,7 @@ case class PluralAnalyzer(t: Threshold) {
     }
 
     val ana = body_to_sd(body)
+    //ana.foreach(x => log.debug(x.toString))
     f(Seq(), ana).reverse
   }
 
@@ -50,6 +50,7 @@ case class PluralAnalyzer(t: Threshold) {
   def analyze(body: String):Seq[(Int, String, String)] = {
 
     val sp:Seq[String] = blocks(split(body)).map(_._1)
+    //sp.foreach(x => log.debug(x))
     for {
       (a::as) <- sp.tails.toSeq
       b <- as
