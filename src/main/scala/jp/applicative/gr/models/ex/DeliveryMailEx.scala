@@ -11,7 +11,7 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
 
   override val tableName = "delivery_mails"
 
-  override val columns = Seq("id", "owner_id", "delivery_mail_type", "bp_pic_group_id", "biz_offer_id", "bp_member_id", "mail_status_type", "subject", "content", "mail_from_name", "mail_from", "mail_cc", "mail_bcc", "planned_setting_at", "mail_send_status_type", "send_end_at", "tag_text", "payment", "age", "auto_matching_last_id", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "delivery_mail_type", "bp_pic_group_id", "biz_offer_id", "bp_member_id", "mail_status_type", "subject", "content", "mail_from_name", "mail_from", "mail_cc", "mail_bcc", "planned_setting_at", "mail_send_status_type", "send_end_at", "tag_text", "payment", "age", "auto_matching_last_id", "import_mail_match_id", "matching_way_type", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   val dm = DeliveryMail.syntax("dm")
   val g = BpPicGroup.syntax("g")
