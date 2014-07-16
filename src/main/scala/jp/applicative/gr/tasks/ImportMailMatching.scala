@@ -16,7 +16,7 @@ class ImportMailMatching(implicit session: DBSession) {
 
   def matching(): Long = {
     log.info("start")
-    SysConfigEx.lastId match {
+    val result: Long = SysConfigEx.lastId match {
       case None => ImportMailEx.findLastId.map { last_id =>
         SysConfigEx.createLastId(last_id)
         log.info("初めての実行です。過去分を無視します")
@@ -30,7 +30,7 @@ class ImportMailMatching(implicit session: DBSession) {
           // 前回処理から追加された案件メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
           val bizList = ImportMailEx.findBizOffers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bizList.nonEmpty) {
-        	log.info("matching bizOffers to bpMembers")
+            log.info("matching bizOffers to bpMembers")
             val bpmTargetList = ImportMailEx.findBpMemberTargets(last_id, days)
             matching_in(bizList, bpmTargetList)
           }
@@ -39,7 +39,7 @@ class ImportMailMatching(implicit session: DBSession) {
           // 前回処理から追加された人材メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
           val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bpmList.nonEmpty) {
-        	log.info("matching bpMembers to bizOffers")
+            log.info("matching bpMembers to bizOffers")
             val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)
             matching_in(bizTargetList, bpmList)
           }
@@ -48,6 +48,8 @@ class ImportMailMatching(implicit session: DBSession) {
           now_last_id
         }.getOrElse(last_id)
     }
+    log.info("end")
+    result
   }
 
   private def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
