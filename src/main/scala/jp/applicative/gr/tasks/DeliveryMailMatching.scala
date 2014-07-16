@@ -4,7 +4,6 @@ import scalikejdbc._
 import jp.applicative.gr.models._
 import jp.applicative.gr.models.ex._
 import org.joda.time.DateTime
-import scalikejdbc.AutoSession
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 
@@ -57,17 +56,22 @@ class DeliveryMailMatching(implicit session: DBSession) {
       d <- DeliveryMailEx.findBizOfferMails(days)
     } {
       log.debug("biz:" + d.id)
-      val list = ImportMailEx.findBpMembersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
-      list.foreach(matching_in(d, _))
-      DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
+      DB localTx { implicit session =>
+        val list = ImportMailEx.findBpMembersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
+        list.foreach(matching_in(d, _))
+        DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
+      }
     }
     for {
       d <- DeliveryMailEx.findBpMemberMails(days)
     } {
       log.debug("bpm:" + d.id)
-      val list = ImportMailEx.findBizOffersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
-      list.foreach(matching_in(d, _))
-      DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
+      DB localTx { implicit session =>
+        val list = ImportMailEx.findBizOffersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
+        list.foreach(matching_in(d, _))
+        DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
+      }
     }
+    log.info("end")
   }
 }
