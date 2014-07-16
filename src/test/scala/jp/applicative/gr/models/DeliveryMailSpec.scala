@@ -31,7 +31,7 @@ class DeliveryMailSpec extends fixture.FlatSpec with Matchers with AutoRollback 
     count should be >(0L)
   }
   it should "create new record" in { implicit session =>
-    val created = DeliveryMail.create(deliveryMailType = "MyString", mailStatusType = "MyString", subject = "MyString", content = "MyString", mailFromName = "MyString", mailFrom = "MyString", plannedSettingAt = DateTime.now, mailSendStatusType = "MyString", createdAt = DateTime.now, updatedAt = DateTime.now)
+    val created = DeliveryMail.create(deliveryMailType = "MyString", mailStatusType = "MyString", subject = "MyString", content = "MyString", mailFromName = "MyString", mailFrom = "MyString", plannedSettingAt = DateTime.now, mailSendStatusType = "MyString", matchingWayType = "MyString", createdAt = DateTime.now, updatedAt = DateTime.now)
     created should not be(null)
   }
   it should "save a record" in { implicit session =>

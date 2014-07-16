@@ -8,7 +8,7 @@ case class BpPicGroup(
   ownerId: Option[Long] = None, 
   bpPicGroupName: String, 
   mailTemplateId: Option[Long] = None, 
-  bpPicGroupType: String, 
+  matchingWayType: String, 
   memo: Option[String] = None, 
   createdAt: DateTime, 
   updatedAt: DateTime, 
@@ -29,7 +29,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
 
   override val tableName = "bp_pic_groups"
 
-  override val columns = Seq("id", "owner_id", "bp_pic_group_name", "mail_template_id", "bp_pic_group_type", "memo", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "bp_pic_group_name", "mail_template_id", "matching_way_type", "memo", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(bpg: SyntaxProvider[BpPicGroup])(rs: WrappedResultSet): BpPicGroup = apply(bpg.resultName)(rs)
   def apply(bpg: ResultName[BpPicGroup])(rs: WrappedResultSet): BpPicGroup = new BpPicGroup(
@@ -37,7 +37,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
     ownerId = rs.get(bpg.ownerId),
     bpPicGroupName = rs.get(bpg.bpPicGroupName),
     mailTemplateId = rs.get(bpg.mailTemplateId),
-    bpPicGroupType = rs.get(bpg.bpPicGroupType),
+    matchingWayType = rs.get(bpg.matchingWayType),
     memo = rs.get(bpg.memo),
     createdAt = rs.get(bpg.createdAt),
     updatedAt = rs.get(bpg.updatedAt),
@@ -82,7 +82,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
     ownerId: Option[Long] = None,
     bpPicGroupName: String,
     mailTemplateId: Option[Long] = None,
-    bpPicGroupType: String,
+    matchingWayType: String,
     memo: Option[String] = None,
     createdAt: DateTime,
     updatedAt: DateTime,
@@ -96,7 +96,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
         column.ownerId,
         column.bpPicGroupName,
         column.mailTemplateId,
-        column.bpPicGroupType,
+        column.matchingWayType,
         column.memo,
         column.createdAt,
         column.updatedAt,
@@ -109,7 +109,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
         ownerId,
         bpPicGroupName,
         mailTemplateId,
-        bpPicGroupType,
+        matchingWayType,
         memo,
         createdAt,
         updatedAt,
@@ -126,7 +126,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
       ownerId = ownerId,
       bpPicGroupName = bpPicGroupName,
       mailTemplateId = mailTemplateId,
-      bpPicGroupType = bpPicGroupType,
+      matchingWayType = matchingWayType,
       memo = memo,
       createdAt = createdAt,
       updatedAt = updatedAt,
@@ -144,7 +144,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
         column.ownerId -> entity.ownerId,
         column.bpPicGroupName -> entity.bpPicGroupName,
         column.mailTemplateId -> entity.mailTemplateId,
-        column.bpPicGroupType -> entity.bpPicGroupType,
+        column.matchingWayType -> entity.matchingWayType,
         column.memo -> entity.memo,
         column.createdAt -> entity.createdAt,
         column.updatedAt -> entity.updatedAt,

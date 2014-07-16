@@ -16,11 +16,11 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
   val dm = DeliveryMail.syntax("dm")
   val g = BpPicGroup.syntax("g")
 
-  def findTargetMails(days: Int, bpPicGroupType: String)(implicit session: DBSession) = {
+  def findTargetMails(days: Int, matchingWayType: String)(implicit session: DBSession) = {
     withSQL {
       select.from(DeliveryMail as dm).join(BpPicGroup as g).on(g.id, dm.bpPicGroupId)
         .where.gt(dm.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days))
-        .and.eq(g.bpPicGroupType, bpPicGroupType)
+        .and.eq(g.matchingWayType, matchingWayType)
         .and.eq(g.deleted, 0)
         .and.eq(dm.deleted, 0)
     }.map(DeliveryMail(dm.resultName)).list.apply()
@@ -53,6 +53,8 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
         payment = d.payment,
         age = d.age,
         autoMatchingLastId = Some(autoMatchingLastId),
+        importMailMatchId = d.importMailMatchId,
+        matchingWayType = d.matchingWayType,
         createdAt = d.createdAt,
         updatedAt = new DateTime(DateTimeZone.UTC),
         lockVersion = d.lockVersion,
@@ -86,6 +88,8 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
         column.payment -> entity.payment,
         column.age -> entity.age,
         column.autoMatchingLastId -> entity.autoMatchingLastId,
+        column.importMailMatchId -> entity.importMailMatchId,
+        column.matchingWayType -> entity.matchingWayType,
         column.createdAt -> entity.createdAt,
         column.updatedAt -> entity.updatedAt,
         column.lockVersion -> entity.lockVersion.map(_ + 1),
