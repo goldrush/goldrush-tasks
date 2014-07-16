@@ -140,6 +140,8 @@ class ImportMailMatching(implicit session: DBSession) {
         ageText = im.ageText,
         nearestStation = im.nearestStation,
         pluralFlg = Some(1),
+        importMailMatchId = im.importMailMatchId,
+        matchingWayType = im.matchingWayType,
         createdAt = im.createdAt,
         updatedAt = new DateTime(DateTimeZone.UTC),
         lockVersion = im.lockVersion.map(_ + 1),

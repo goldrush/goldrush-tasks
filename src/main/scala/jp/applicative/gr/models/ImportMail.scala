@@ -34,6 +34,8 @@ class ImportMail(
   val ageText: Option[String] = None,
   val nearestStation: Option[String] = None,
   val pluralFlg: Option[Int] = None,
+  val importMailMatchId: Option[Long] = None,
+  val matchingWayType: String,
   val createdAt: DateTime,
   val updatedAt: DateTime,
   val lockVersion: Option[Long] = None,
@@ -73,6 +75,8 @@ class ImportMail(
     ageText: Option[String] = this.ageText,
     nearestStation: Option[String] = this.nearestStation,
     pluralFlg: Option[Int] = this.pluralFlg,
+    importMailMatchId: Option[Long] = this.importMailMatchId,
+    matchingWayType: String = this.matchingWayType,
     createdAt: DateTime = this.createdAt,
     updatedAt: DateTime = this.updatedAt,
     lockVersion: Option[Long] = this.lockVersion,
@@ -111,6 +115,8 @@ class ImportMail(
       ageText = ageText,
       nearestStation = nearestStation,
       pluralFlg = pluralFlg,
+      importMailMatchId = importMailMatchId,
+      matchingWayType = matchingWayType,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -131,7 +137,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
 
   override val tableName = "import_mails"
 
-  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "subject_tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "plural_flg", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "subject_tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "plural_flg", "import_mail_match_id", "matching_way_type", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(im: SyntaxProvider[ImportMail])(rs: WrappedResultSet): ImportMail = apply(im.resultName)(rs)
   def apply(im: ResultName[ImportMail])(rs: WrappedResultSet): ImportMail = new ImportMail(
@@ -165,6 +171,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     ageText = rs.get(im.ageText),
     nearestStation = rs.get(im.nearestStation),
     pluralFlg = rs.get(im.pluralFlg),
+    importMailMatchId = rs.get(im.importMailMatchId),
+    matchingWayType = rs.get(im.matchingWayType),
     createdAt = rs.get(im.createdAt),
     updatedAt = rs.get(im.updatedAt),
     lockVersion = rs.get(im.lockVersion),
@@ -234,6 +242,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     ageText: Option[String] = None,
     nearestStation: Option[String] = None,
     pluralFlg: Option[Int] = None,
+    importMailMatchId: Option[Long] = None,
+    matchingWayType: String,
     createdAt: DateTime,
     updatedAt: DateTime,
     lockVersion: Option[Long] = None,
@@ -272,6 +282,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.ageText,
         column.nearestStation,
         column.pluralFlg,
+        column.importMailMatchId,
+        column.matchingWayType,
         column.createdAt,
         column.updatedAt,
         column.lockVersion,
@@ -309,6 +321,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         ageText,
         nearestStation,
         pluralFlg,
+        importMailMatchId,
+        matchingWayType,
         createdAt,
         updatedAt,
         lockVersion,
@@ -350,6 +364,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
       ageText = ageText,
       nearestStation = nearestStation,
       pluralFlg = pluralFlg,
+      importMailMatchId = importMailMatchId,
+      matchingWayType = matchingWayType,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -392,6 +408,8 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.ageText -> entity.ageText,
         column.nearestStation -> entity.nearestStation,
         column.pluralFlg -> entity.pluralFlg,
+        column.importMailMatchId -> entity.importMailMatchId,
+        column.matchingWayType -> entity.matchingWayType,
         column.createdAt -> entity.createdAt,
         column.updatedAt -> entity.updatedAt,
         column.lockVersion -> entity.lockVersion,

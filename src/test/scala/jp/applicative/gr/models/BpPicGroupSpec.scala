@@ -31,7 +31,7 @@ class BpPicGroupSpec extends fixture.FlatSpec with Matchers with AutoRollback {
     count should be >(0L)
   }
   it should "create new record" in { implicit session =>
-    val created = BpPicGroup.create(bpPicGroupName = "MyString", bpPicGroupType = "MyString", createdAt = DateTime.now, updatedAt = DateTime.now)
+    val created = BpPicGroup.create(bpPicGroupName = "MyString", matchingWayType = "MyString", createdAt = DateTime.now, updatedAt = DateTime.now)
     created should not be(null)
   }
   it should "save a record" in { implicit session =>

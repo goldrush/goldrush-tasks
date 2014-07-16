@@ -24,6 +24,8 @@ class DeliveryMail(
   val payment: Option[Double] = None,
   val age: Option[Int] = None,
   val autoMatchingLastId: Option[Long] = None,
+  val importMailMatchId: Option[Long] = None,
+  val matchingWayType: String,
   val createdAt: DateTime,
   val updatedAt: DateTime,
   val lockVersion: Option[Long] = None,
@@ -53,6 +55,8 @@ class DeliveryMail(
     payment: Option[Double] = this.payment,
     age: Option[Int] = this.age,
     autoMatchingLastId: Option[Long] = this.autoMatchingLastId,
+    importMailMatchId: Option[Long] = this.importMailMatchId,
+    matchingWayType: String = this.matchingWayType,
     createdAt: DateTime = this.createdAt,
     updatedAt: DateTime = this.updatedAt,
     lockVersion: Option[Long] = this.lockVersion,
@@ -81,6 +85,8 @@ class DeliveryMail(
       payment = payment,
       age = age,
       autoMatchingLastId = autoMatchingLastId,
+      importMailMatchId = importMailMatchId,
+      matchingWayType = matchingWayType,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -101,7 +107,7 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
 
   override val tableName = "delivery_mails"
 
-  override val columns = Seq("id", "owner_id", "delivery_mail_type", "bp_pic_group_id", "biz_offer_id", "bp_member_id", "mail_status_type", "subject", "content", "mail_from_name", "mail_from", "mail_cc", "mail_bcc", "planned_setting_at", "mail_send_status_type", "send_end_at", "tag_text", "payment", "age", "auto_matching_last_id", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "delivery_mail_type", "bp_pic_group_id", "biz_offer_id", "bp_member_id", "mail_status_type", "subject", "content", "mail_from_name", "mail_from", "mail_cc", "mail_bcc", "planned_setting_at", "mail_send_status_type", "send_end_at", "tag_text", "payment", "age", "auto_matching_last_id", "import_mail_match_id", "matching_way_type", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(dm: SyntaxProvider[DeliveryMail])(rs: WrappedResultSet): DeliveryMail = apply(dm.resultName)(rs)
   def apply(dm: ResultName[DeliveryMail])(rs: WrappedResultSet): DeliveryMail = new DeliveryMail(
@@ -125,6 +131,8 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
     payment = rs.get(dm.payment),
     age = rs.get(dm.age),
     autoMatchingLastId = rs.get(dm.autoMatchingLastId),
+    importMailMatchId = rs.get(dm.importMailMatchId),
+    matchingWayType = rs.get(dm.matchingWayType),
     createdAt = rs.get(dm.createdAt),
     updatedAt = rs.get(dm.updatedAt),
     lockVersion = rs.get(dm.lockVersion),
@@ -184,6 +192,8 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
     payment: Option[Double] = None,
     age: Option[Int] = None,
     autoMatchingLastId: Option[Long] = None,
+    importMailMatchId: Option[Long] = None,
+    matchingWayType: String,
     createdAt: DateTime,
     updatedAt: DateTime,
     lockVersion: Option[Long] = None,
@@ -212,6 +222,8 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
         column.payment,
         column.age,
         column.autoMatchingLastId,
+        column.importMailMatchId,
+        column.matchingWayType,
         column.createdAt,
         column.updatedAt,
         column.lockVersion,
@@ -239,6 +251,8 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
         payment,
         age,
         autoMatchingLastId,
+        importMailMatchId,
+        matchingWayType,
         createdAt,
         updatedAt,
         lockVersion,
@@ -270,6 +284,8 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
       payment = payment,
       age = age,
       autoMatchingLastId = autoMatchingLastId,
+      importMailMatchId = importMailMatchId,
+      matchingWayType = matchingWayType,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -302,6 +318,8 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
         column.payment -> entity.payment,
         column.age -> entity.age,
         column.autoMatchingLastId -> entity.autoMatchingLastId,
+        column.importMailMatchId -> entity.importMailMatchId,
+        column.matchingWayType -> entity.matchingWayType,
         column.createdAt -> entity.createdAt,
         column.updatedAt -> entity.updatedAt,
         column.lockVersion -> entity.lockVersion,

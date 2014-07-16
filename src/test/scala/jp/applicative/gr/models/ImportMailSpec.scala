@@ -31,7 +31,7 @@ class ImportMailSpec extends fixture.FlatSpec with Matchers with AutoRollback {
     count should be >(0L)
   }
   it should "create new record" in { implicit session =>
-    val created = ImportMail.create(receivedAt = DateTime.now, mailSubject = "MyString", mailBody = "MyString", mailFrom = "MyString", mailSenderName = "MyString", createdAt = DateTime.now, updatedAt = DateTime.now)
+    val created = ImportMail.create(receivedAt = DateTime.now, mailSubject = "MyString", mailBody = "MyString", mailFrom = "MyString", mailSenderName = "MyString", matchingWayType = "MyString", createdAt = DateTime.now, updatedAt = DateTime.now)
     created should not be(null)
   }
   it should "save a record" in { implicit session =>
