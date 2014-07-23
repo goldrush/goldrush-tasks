@@ -31,7 +31,7 @@ class ImportMailMatching(implicit session: DBSession) {
           val bizList = ImportMailEx.findBizOffers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bizList.nonEmpty) {
             log.info("matching bizOffers to bpMembers")
-            val bpmTargetList = ImportMailEx.findBpMemberTargets(last_id, days)
+            val bpmTargetList = ImportMailEx.findBpMemberTargets(now_last_id, days) // 非対称 biz -> bpは最新から、bp -> bizは前回最終からマッチング。最新×最新がダブるのを避ける
             matching_in(bizList, bpmTargetList)
           }
 
