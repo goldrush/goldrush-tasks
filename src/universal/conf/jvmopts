@@ -1,1 +1,1 @@
--Dconfig.file=${app_home}/../conf/application.conf
+-Dconfig.file=conf/application.conf
