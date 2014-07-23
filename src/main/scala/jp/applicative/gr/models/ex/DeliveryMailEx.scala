@@ -21,6 +21,7 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
       select.from(DeliveryMail as dm).join(BpPicGroup as g).on(g.id, dm.bpPicGroupId)
         .where.gt(dm.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days))
         .and.eq(g.matchingWayType, matchingWayType)
+        .and.ne(dm.mailStatusType, "editing")
         .and.eq(g.deleted, 0)
         .and.eq(dm.deleted, 0)
     }.map(DeliveryMail(dm.resultName)).list.apply()
