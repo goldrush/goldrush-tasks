@@ -26,7 +26,7 @@ object Main {
       warningLogLevel = 'WARN)
 
     java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"))
-    val dbenv:String = opt.get("dbenv").get.getOrElse("development")
+    val dbenv:String = opt.get("dbenv").flatMap(x => x).getOrElse("development")
     DBsWithEnv(dbenv).setupAll()
     
     implicit val session = AutoSession
