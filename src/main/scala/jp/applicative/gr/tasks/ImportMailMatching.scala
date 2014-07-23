@@ -52,20 +52,21 @@ class ImportMailMatching(implicit session: DBSession) {
     result
   }
 
+  /**
+   * 件名タグが存在する && 有効なタグ
+   *   -> 人材側のタグにそのタグが存在する  = 2
+   *   -> 人材側のタグにそのタグが存在しない  = 0
+   * 有効な件名タグが存在しない = 1
+   */
+  def subjectTagMatchinFlg(subjectTagText: Option[String], m: String): Some[Int] = Some(subjectTagText match {
+    case Some(x) =>
+      if (util.point(util.normalizeTagList(x)) > 0) {
+        if (util.check(x, m).isEmpty) 0 else 2
+      } else 1
+    case None => 1
+  })
+  
   private def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
-    /**
-     * 件名タグが存在する && 有効なタグ
-     *   -> 人材側のタグにそのタグが存在する  = 2
-     *   -> 人材側のタグにそのタグが存在しない  = 0
-     * 有効な件名タグが存在しない = 1
-     */
-    def subjectTagMatchinFlg(subjectTagText: Option[String], m: String): Some[Int] = Some(subjectTagText match {
-      case Some(x) =>
-        if (util.point(util.normalizeTagList(x)) > 0) {
-          if (util.check(x, m).isEmpty) 0 else 2
-        } else 1
-      case None => 1
-    })
     for {
       biz <- bizList
       bpm <- bpmList
@@ -86,6 +87,7 @@ class ImportMailMatching(implicit session: DBSession) {
               mailMatchScore = Some(p),
               tagText = Some(checked.mkString(",")),
               subjectTagMatchFlg = subjectTagMatchinFlg(biz.subjectTagText, m),
+              immStatusType = "open",
               paymentGap = biz.payment.flatMap(x => bpm.payment.map(y => x - y)),
               ageGap = biz.age.flatMap(x => bpm.age.map(y => x - y)),
               starred = Some(0),

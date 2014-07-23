@@ -31,7 +31,7 @@ class ImportMailMatchSpec extends fixture.FlatSpec with Matchers with AutoRollba
     count should be >(0L)
   }
   it should "create new record" in { implicit session =>
-    val created = ImportMailMatch.create(bizOfferMailId = 1L, bpMemberMailId = 1L, receivedAt = DateTime.now, createdAt = DateTime.now, updatedAt = DateTime.now)
+    val created = ImportMailMatch.create(bizOfferMailId = 1L, bpMemberMailId = 1L, immStatusType = "MyString", receivedAt = DateTime.now, createdAt = DateTime.now, updatedAt = DateTime.now)
     created should not be(null)
   }
   it should "save a record" in { implicit session =>

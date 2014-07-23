@@ -11,6 +11,7 @@ case class ImportMailMatch(
   mailMatchScore: Option[Long] = None, 
   tagText: Option[String] = None, 
   subjectTagMatchFlg: Option[Int] = None, 
+  immStatusType: String, 
   paymentGap: Option[Double] = None, 
   ageGap: Option[Int] = None, 
   starred: Option[Int] = None, 
@@ -34,7 +35,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
 
   override val tableName = "import_mail_matches"
 
-  override val columns = Seq("id", "owner_id", "biz_offer_mail_id", "bp_member_mail_id", "mail_match_score", "tag_text", "subject_tag_match_flg", "payment_gap", "age_gap", "starred", "received_at", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "biz_offer_mail_id", "bp_member_mail_id", "mail_match_score", "tag_text", "subject_tag_match_flg", "imm_status_type", "payment_gap", "age_gap", "starred", "received_at", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(imm: SyntaxProvider[ImportMailMatch])(rs: WrappedResultSet): ImportMailMatch = apply(imm.resultName)(rs)
   def apply(imm: ResultName[ImportMailMatch])(rs: WrappedResultSet): ImportMailMatch = new ImportMailMatch(
@@ -45,6 +46,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
     mailMatchScore = rs.get(imm.mailMatchScore),
     tagText = rs.get(imm.tagText),
     subjectTagMatchFlg = rs.get(imm.subjectTagMatchFlg),
+    immStatusType = rs.get(imm.immStatusType),
     paymentGap = rs.get(imm.paymentGap),
     ageGap = rs.get(imm.ageGap),
     starred = rs.get(imm.starred),
@@ -95,6 +97,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
     mailMatchScore: Option[Long] = None,
     tagText: Option[String] = None,
     subjectTagMatchFlg: Option[Int] = None,
+    immStatusType: String,
     paymentGap: Option[Double] = None,
     ageGap: Option[Int] = None,
     starred: Option[Int] = None,
@@ -114,6 +117,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         column.mailMatchScore,
         column.tagText,
         column.subjectTagMatchFlg,
+        column.immStatusType,
         column.paymentGap,
         column.ageGap,
         column.starred,
@@ -132,6 +136,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         mailMatchScore,
         tagText,
         subjectTagMatchFlg,
+        immStatusType,
         paymentGap,
         ageGap,
         starred,
@@ -154,6 +159,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
       mailMatchScore = mailMatchScore,
       tagText = tagText,
       subjectTagMatchFlg = subjectTagMatchFlg,
+      immStatusType = immStatusType,
       paymentGap = paymentGap,
       ageGap = ageGap,
       starred = starred,
@@ -177,6 +183,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
         column.mailMatchScore -> entity.mailMatchScore,
         column.tagText -> entity.tagText,
         column.subjectTagMatchFlg -> entity.subjectTagMatchFlg,
+        column.immStatusType -> entity.immStatusType,
         column.paymentGap -> entity.paymentGap,
         column.ageGap -> entity.ageGap,
         column.starred -> entity.starred,
