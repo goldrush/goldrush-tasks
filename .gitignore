@@ -2,3 +2,16 @@
 .project
 project/target
 target
+logs
+project/project
+tmp
+.history
+dist
+/.idea
+/*.iml
+/out
+/.idea_modules
+/.classpath
+/.project
+/RUNNING_PID
+/.settings
