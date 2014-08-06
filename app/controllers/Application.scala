@@ -19,7 +19,7 @@ object Application extends Controller {
     val task: String  = request.getQueryString("task").getOrElse("default")
 
     val mailMatchingFuture = Future { Task.mailMatching(dbenv, task) }
-    val dummyFuture        = Future { "Start Mail matcing task." }
+    val dummyFuture        = Future { "Start Mail matching task." }
 
     dummyFuture.map(Ok(_))
   }
