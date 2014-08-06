@@ -169,3 +169,9 @@ tramp
 #sftp configuration file
 sftp-config.json
 
+
+### etc ###
+.classpath
+.project
+/RUNNING_PID
+

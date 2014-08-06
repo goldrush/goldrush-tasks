@@ -37,3 +37,12 @@ initialCommands := "import jp.applicative.gr.tasks._"
 
 scalikejdbcSettings
 
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
+
+libraryDependencies ++= Seq(
+  jdbc,
+  anorm,
+  cache,
+  ws
+)
+
