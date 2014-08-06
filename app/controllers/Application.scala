@@ -2,7 +2,9 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import play.api.libs._
 import scala.concurrent._
+import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import jp.applicative.gr.tasks._
 
@@ -16,7 +18,9 @@ object Application extends Controller {
     val dbenv: String = request.getQueryString("dbenv").getOrElse("development")
     val task: String  = request.getQueryString("task").getOrElse("default")
 
-    val futureMailMatching = Future { Task.mailMatching(dbenv, task) }
-    futureMailMatching.map(_ => Ok("できたかな？？？"))
+    val mailMatchingFuture = Future { Task.mailMatching(dbenv, task) }
+    val dummyFuture        = Future { "Start Mail matcing task." }
+
+    dummyFuture.map(Ok(_))
   }
 }
