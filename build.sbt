@@ -7,9 +7,9 @@ organization := "jp.applicative"
 
 version := "0.0.1-SNAPSHOT"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.2"
 
-val scalikeJDBCVersion = "2.0.6"
+val scalikeJDBCVersion = "2.1.2"
 
 packageArchetype.java_application
 
@@ -27,9 +27,9 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc-config"  % scalikeJDBCVersion,
   "mysql" % "mysql-connector-java" % "5.1.6",
   "ch.qos.logback"  %  "logback-classic"    % "1.1.+",
-  "org.scalikejdbc" % "scalikejdbc-test_2.10" % scalikeJDBCVersion % "test" withSources() withJavadoc(),
+  "org.scalikejdbc" %% "scalikejdbc-test" % scalikeJDBCVersion % "test" withSources() withJavadoc(),
   //"com.twitter" %% "finagle-http" % "6.17.0" withSources(),
-  "org.scalatest" % "scalatest_2.10" % "2.2.0" % "test" withSources() withJavadoc(),
+  "org.scalatest" %% "scalatest" % "2.2.0" % "test" withSources() withJavadoc(),
   "org.scalacheck" %% "scalacheck" % "1.11.4" % "test" withSources() withJavadoc()
 )
 

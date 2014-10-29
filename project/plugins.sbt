@@ -17,7 +17,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.0.0")
 
-addSbtPlugin("org.scalikejdbc" %% "scalikejdbc-mapper-generator" % "2.0.5")
+addSbtPlugin("org.scalikejdbc" %% "scalikejdbc-mapper-generator" % "2.1.2")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "0.7.1")
 
