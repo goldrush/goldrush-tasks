@@ -36,7 +36,7 @@ object ImportMailEx {
       .limit(1000)
       .offset(page * 1000))
       
-  def findLastId()(implicit session: DBSession): Option[Long] = { 
+  def findLastId(implicit session: DBSession): Option[Long] = { 
     withSQL { 
 	  select.from(ImportMail as im).where.eq(im.deleted, 0).orderBy(im.id).desc.limit(1)
     }.map(ImportMail(im.resultName)).single.apply().map(_.id)

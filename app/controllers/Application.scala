@@ -15,10 +15,9 @@ object Application extends Controller {
   }
 
   def mailMatching = Action.async { request =>
-    val dbenv: String = request.getQueryString("dbenv").getOrElse("development")
     val task: String  = request.getQueryString("task").getOrElse("default")
 
-    val mailMatchingFuture = Future { Task.mailMatching(dbenv, task) }
+    val mailMatchingFuture = Future { Task.mailMatching(task) }
     val dummyFuture        = Future { "Start Mail matching task." }
 
     dummyFuture.map(Ok(_))

@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 
-class DeliveryMailMatching(implicit session: DBSession) {
+class DeliveryMailMatching(session: DBSession) {
 
   private val log = LoggerFactory.getLogger(this.getClass())
 
@@ -47,13 +47,13 @@ class DeliveryMailMatching(implicit session: DBSession) {
 
   def matching(last_id: Long) {
     // 配信メールを取得する対象となる日数を取得
-    val days: Int = SysConfigEx.deliveryMailTargetDays
+    val days: Int = SysConfigEx.deliveryMailTargetDays(session)
     // 配信メールにぶつける取込メールの取得日数(取込メール自動マッチングと共用)
-    val importMailDays: Int = SysConfigEx.importMailTargetDays
+    val importMailDays: Int = SysConfigEx.importMailTargetDays(session)
     //val last_id: Long = ImportMailEx.findLastId.getOrElse(0)
     log.info("start")
     for {
-      d <- DeliveryMailEx.findBizOfferMails(days)
+      d <- DeliveryMailEx.findBizOfferMails(days)(session)
     } {
       log.debug("biz:" + d.id)
       DB localTx { implicit session =>
@@ -63,7 +63,7 @@ class DeliveryMailMatching(implicit session: DBSession) {
       }
     }
     for {
-      d <- DeliveryMailEx.findBpMemberMails(days)
+      d <- DeliveryMailEx.findBpMemberMails(days)(session)
     } {
       log.debug("bpm:" + d.id)
       DB localTx { implicit session =>

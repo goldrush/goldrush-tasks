@@ -8,7 +8,7 @@ import scalikejdbc.AutoSession
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 
-class ImportMailMatching(implicit session: DBSession) {
+class ImportMailMatching(session: DBSession) {
 
   private val log = LoggerFactory.getLogger(this.getClass())
 
@@ -16,35 +16,35 @@ class ImportMailMatching(implicit session: DBSession) {
 
   def matching(): Long = {
     log.info("start")
-    val result: Long = SysConfigEx.lastId match {
-      case None => ImportMailEx.findLastId.map { last_id =>
+    val result: Long = SysConfigEx.lastId(session) match {
+      case None => ImportMailEx.findLastId(session).map { last_id =>
         SysConfigEx.createLastId(last_id)
         log.info("初めての実行です。過去分を無視します")
         last_id
       }.getOrElse(0)
       case Some(last_id) =>
-        ImportMailEx.findLastId.map { now_last_id =>
-          val days = SysConfigEx.importMailTargetDays
+        ImportMailEx.findLastId(session).map { now_last_id =>
+          val days = SysConfigEx.importMailTargetDays(session)
 
           log.info("find bizOffers")
           // 前回処理から追加された案件メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
-          val bizList = ImportMailEx.findBizOffers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
+          val bizList = ImportMailEx.findBizOffers(last_id, now_last_id)(session).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bizList.nonEmpty) {
             log.info("matching bizOffers to bpMembers")
-            val bpmTargetList = ImportMailEx.findBpMemberTargets(now_last_id, days) // 非対称 biz -> bpは最新から、bp -> bizは前回最終からマッチング。最新×最新がダブるのを避ける
+            val bpmTargetList = ImportMailEx.findBpMemberTargets(now_last_id, days)(session) // 非対称 biz -> bpは最新から、bp -> bizは前回最終からマッチング。最新×最新がダブるのを避ける
             matching_in(bizList, bpmTargetList)
           }
 
           log.info("find bpMembers")
           // 前回処理から追加された人材メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
-          val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
+          val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id)(session).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bpmList.nonEmpty) {
             log.info("matching bpMembers to bizOffers")
-            val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)
+            val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)(session)
             matching_in(bizTargetList, bpmList)
           }
 
-          SysConfigEx.createOrUpdateLastId(now_last_id)
+          SysConfigEx.createOrUpdateLastId(now_last_id)(session)
           now_last_id
         }.getOrElse(last_id)
     }

@@ -31,7 +31,7 @@ object Main {
     
     implicit val session = AutoSession
 
-    val imm = new ImportMailMatching
+    val imm = new ImportMailMatching(session)
     args.toList match {
       case "pluralAll" :: _ =>
         Stream.from(0).foreach { i =>
@@ -41,7 +41,7 @@ object Main {
         }
       case _ =>
         val last_id = imm.matching
-        val dmm = new DeliveryMailMatching
+        val dmm = new DeliveryMailMatching(session)
         dmm.matching(last_id)
     }
   }
