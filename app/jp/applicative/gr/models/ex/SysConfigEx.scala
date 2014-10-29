@@ -47,7 +47,7 @@ object SysConfigEx {
     }
   }
   
-  def createLastId(last_id:Long) {
+  def createLastId(last_id:Long)(implicit session: DBSession) {
    		val now = new DateTime(DateTimeZone.UTC)
       	SysConfig.create(
 	        ownerId = None,

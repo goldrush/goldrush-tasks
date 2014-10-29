@@ -33,41 +33,15 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
 
   def updateAutoMatchingLastId(d: DeliveryMail, autoMatchingLastId: Long)(implicit session: DBSession) {
     DeliveryMailEx.saveWithLockVersion(
-      new DeliveryMail(
-        id = d.id,
-        ownerId = d.ownerId,
-        deliveryMailType = d.deliveryMailType,
-        bpPicGroupId = d.bpPicGroupId,
-        bizOfferId = d.bizOfferId,
-        bpMemberId = d.bpMemberId,
-        mailStatusType = d.mailStatusType,
-        subject = d.subject,
-        content = d.content,
-        mailFromName = d.mailFromName,
-        mailFrom = d.mailFrom,
-        mailCc = d.mailCc,
-        mailBcc = d.mailBcc,
-        plannedSettingAt = d.plannedSettingAt,
-        mailSendStatusType = d.mailSendStatusType,
-        sendEndAt = d.sendEndAt,
-        tagText = d.tagText,
-        payment = d.payment,
-        age = d.age,
+      d.copy(
         autoMatchingLastId = Some(autoMatchingLastId),
-        importMailMatchId = d.importMailMatchId,
-        matchingWayType = d.matchingWayType,
-        createdAt = d.createdAt,
         updatedAt = new DateTime(DateTimeZone.UTC),
-        lockVersion = d.lockVersion,
-        createdUser = d.createdUser,
-        updatedUser = Some("MailMatching"),
-        deletedAt = d.deletedAt,
-        deleted = d.deleted))
+        updatedUser = Some("MailMatching")))
   }
 
   @tailrec
   def saveWithLockVersion(entity: DeliveryMail, retry: Int = 60)(implicit session: DBSession): DeliveryMail = {
-    val rows: Int =  withSQL {
+    val rows: Int = withSQL {
       update(DeliveryMail).set(
         column.id -> entity.id,
         column.ownerId -> entity.ownerId,
@@ -97,15 +71,14 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
         column.createdUser -> entity.createdUser,
         column.updatedUser -> entity.updatedUser,
         column.deletedAt -> entity.deletedAt,
-        column.deleted -> entity.deleted
-      ).where.eq(column.id, entity.id).and.eq(column.lockVersion, entity.lockVersion)
+        column.deleted -> entity.deleted).where.eq(column.id, entity.id).and.eq(column.lockVersion, entity.lockVersion)
     }.update.apply()
-    
-    if (rows > 0){
+
+    if (rows > 0) {
       entity
-    }else if (0 >= retry){
+    } else if (0 >= retry) {
       throw new RetryCountOverError()
-    }else{
+    } else {
       Thread.sleep(1000)
       saveWithLockVersion(entity, retry - 1)
     }

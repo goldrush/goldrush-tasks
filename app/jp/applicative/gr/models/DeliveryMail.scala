@@ -96,9 +96,9 @@ class DeliveryMail(
       deleted = deleted)
   }
 
-  def save()(implicit session: DBSession = DeliveryMail.autoSession): DeliveryMail = DeliveryMail.save(this)(session)
+  def save()(implicit session: DBSession): DeliveryMail = DeliveryMail.save(this)(session)
 
-  def destroy()(implicit session: DBSession = DeliveryMail.autoSession): Unit = DeliveryMail.destroy(this)(session)
+  def destroy()(implicit session: DBSession): Unit = DeliveryMail.destroy(this)(session)
 
 }
       
@@ -146,27 +146,27 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
 
   override val autoSession = AutoSession
 
-  def find(id: Long)(implicit session: DBSession = autoSession): Option[DeliveryMail] = {
+  def find(id: Long)(implicit session: DBSession): Option[DeliveryMail] = {
     withSQL {
       select.from(DeliveryMail as dm).where.eq(dm.id, id)
     }.map(DeliveryMail(dm.resultName)).single.apply()
   }
           
-  def findAll()(implicit session: DBSession = autoSession): List[DeliveryMail] = {
+  def findAll()(implicit session: DBSession): List[DeliveryMail] = {
     withSQL(select.from(DeliveryMail as dm)).map(DeliveryMail(dm.resultName)).list.apply()
   }
           
-  def countAll()(implicit session: DBSession = autoSession): Long = {
+  def countAll()(implicit session: DBSession): Long = {
     withSQL(select(sqls"count(1)").from(DeliveryMail as dm)).map(rs => rs.long(1)).single.apply().get
   }
           
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[DeliveryMail] = {
+  def findAllBy(where: SQLSyntax)(implicit session: DBSession): List[DeliveryMail] = {
     withSQL { 
       select.from(DeliveryMail as dm).where.append(sqls"${where}")
     }.map(DeliveryMail(dm.resultName)).list.apply()
   }
       
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
+  def countBy(where: SQLSyntax)(implicit session: DBSession): Long = {
     withSQL { 
       select(sqls"count(1)").from(DeliveryMail as dm).where.append(sqls"${where}")
     }.map(_.long(1)).single.apply().get
@@ -200,7 +200,7 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
     createdUser: Option[String] = None,
     updatedUser: Option[String] = None,
     deletedAt: Option[DateTime] = None,
-    deleted: Option[Int] = None)(implicit session: DBSession = autoSession): DeliveryMail = {
+    deleted: Option[Int] = None)(implicit session: DBSession): DeliveryMail = {
     val generatedKey = withSQL {
       insert.into(DeliveryMail).columns(
         column.ownerId,
@@ -295,7 +295,7 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
       deleted = deleted)
   }
 
-  def save(entity: DeliveryMail)(implicit session: DBSession = autoSession): DeliveryMail = {
+  def save(entity: DeliveryMail)(implicit session: DBSession): DeliveryMail = {
     withSQL {
       update(DeliveryMail).set(
         column.id -> entity.id,
@@ -332,7 +332,7 @@ object DeliveryMail extends SQLSyntaxSupport[DeliveryMail] {
     entity
   }
         
-  def destroy(entity: DeliveryMail)(implicit session: DBSession = autoSession): Unit = {
+  def destroy(entity: DeliveryMail)(implicit session: DBSession): Unit = {
     withSQL { delete.from(DeliveryMail).where.eq(column.id, entity.id) }.update.apply()
   }
         

@@ -1,8 +1,5 @@
 package jp.applicative.gr.tasks
 
-import play.api._
-import play.api.mvc._
-
 import scalikejdbc._
 import scalikejdbc.config._
 import java.io.FileNotFoundException

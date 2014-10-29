@@ -18,9 +18,9 @@ case class BpPicGroup(
   deletedAt: Option[DateTime] = None, 
   deleted: Option[Int] = None) {
 
-  def save()(implicit session: DBSession = BpPicGroup.autoSession): BpPicGroup = BpPicGroup.save(this)(session)
+  def save()(implicit session: DBSession): BpPicGroup = BpPicGroup.save(this)(session)
 
-  def destroy()(implicit session: DBSession = BpPicGroup.autoSession): Unit = BpPicGroup.destroy(this)(session)
+  def destroy()(implicit session: DBSession): Unit = BpPicGroup.destroy(this)(session)
 
 }
       
@@ -52,27 +52,27 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
 
   override val autoSession = AutoSession
 
-  def find(id: Long)(implicit session: DBSession = autoSession): Option[BpPicGroup] = {
+  def find(id: Long)(implicit session: DBSession): Option[BpPicGroup] = {
     withSQL {
       select.from(BpPicGroup as bpg).where.eq(bpg.id, id)
     }.map(BpPicGroup(bpg.resultName)).single.apply()
   }
           
-  def findAll()(implicit session: DBSession = autoSession): List[BpPicGroup] = {
+  def findAll()(implicit session: DBSession): List[BpPicGroup] = {
     withSQL(select.from(BpPicGroup as bpg)).map(BpPicGroup(bpg.resultName)).list.apply()
   }
           
-  def countAll()(implicit session: DBSession = autoSession): Long = {
+  def countAll()(implicit session: DBSession): Long = {
     withSQL(select(sqls"count(1)").from(BpPicGroup as bpg)).map(rs => rs.long(1)).single.apply().get
   }
           
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[BpPicGroup] = {
+  def findAllBy(where: SQLSyntax)(implicit session: DBSession): List[BpPicGroup] = {
     withSQL { 
       select.from(BpPicGroup as bpg).where.append(sqls"${where}")
     }.map(BpPicGroup(bpg.resultName)).list.apply()
   }
       
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
+  def countBy(where: SQLSyntax)(implicit session: DBSession): Long = {
     withSQL { 
       select(sqls"count(1)").from(BpPicGroup as bpg).where.append(sqls"${where}")
     }.map(_.long(1)).single.apply().get
@@ -90,7 +90,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
     createdUser: Option[String] = None,
     updatedUser: Option[String] = None,
     deletedAt: Option[DateTime] = None,
-    deleted: Option[Int] = None)(implicit session: DBSession = autoSession): BpPicGroup = {
+    deleted: Option[Int] = None)(implicit session: DBSession): BpPicGroup = {
     val generatedKey = withSQL {
       insert.into(BpPicGroup).columns(
         column.ownerId,
@@ -137,7 +137,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
       deleted = deleted)
   }
 
-  def save(entity: BpPicGroup)(implicit session: DBSession = autoSession): BpPicGroup = {
+  def save(entity: BpPicGroup)(implicit session: DBSession): BpPicGroup = {
     withSQL {
       update(BpPicGroup).set(
         column.id -> entity.id,
@@ -158,7 +158,7 @@ object BpPicGroup extends SQLSyntaxSupport[BpPicGroup] {
     entity
   }
         
-  def destroy(entity: BpPicGroup)(implicit session: DBSession = autoSession): Unit = {
+  def destroy(entity: BpPicGroup)(implicit session: DBSession): Unit = {
     withSQL { delete.from(BpPicGroup).where.eq(column.id, entity.id) }.update.apply()
   }
         

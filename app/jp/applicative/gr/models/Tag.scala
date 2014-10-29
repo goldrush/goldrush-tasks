@@ -23,9 +23,9 @@ case class Tag(
   deletedAt: Option[DateTime] = None, 
   deleted: Option[Int] = None) {
 
-  def save()(implicit session: DBSession = Tag.autoSession): Tag = Tag.save(this)(session)
+  def save()(implicit session: DBSession): Tag = Tag.save(this)(session)
 
-  def destroy()(implicit session: DBSession = Tag.autoSession): Unit = Tag.destroy(this)(session)
+  def destroy()(implicit session: DBSession): Unit = Tag.destroy(this)(session)
 
 }
       
@@ -62,27 +62,27 @@ object Tag extends SQLSyntaxSupport[Tag] {
 
   override val autoSession = AutoSession
 
-  def find(id: Long)(implicit session: DBSession = autoSession): Option[Tag] = {
+  def find(id: Long)(implicit session: DBSession): Option[Tag] = {
     withSQL {
       select.from(Tag as t).where.eq(t.id, id)
     }.map(Tag(t.resultName)).single.apply()
   }
           
-  def findAll()(implicit session: DBSession = autoSession): List[Tag] = {
+  def findAll()(implicit session: DBSession): List[Tag] = {
     withSQL(select.from(Tag as t)).map(Tag(t.resultName)).list.apply()
   }
           
-  def countAll()(implicit session: DBSession = autoSession): Long = {
+  def countAll()(implicit session: DBSession): Long = {
     withSQL(select(sqls"count(1)").from(Tag as t)).map(rs => rs.long(1)).single.apply().get
   }
           
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[Tag] = {
+  def findAllBy(where: SQLSyntax)(implicit session: DBSession): List[Tag] = {
     withSQL { 
       select.from(Tag as t).where.append(sqls"${where}")
     }.map(Tag(t.resultName)).list.apply()
   }
       
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
+  def countBy(where: SQLSyntax)(implicit session: DBSession): Long = {
     withSQL { 
       select(sqls"count(1)").from(Tag as t).where.append(sqls"${where}")
     }.map(_.long(1)).single.apply().get
@@ -105,7 +105,7 @@ object Tag extends SQLSyntaxSupport[Tag] {
     createdUser: Option[String] = None,
     updatedUser: Option[String] = None,
     deletedAt: Option[DateTime] = None,
-    deleted: Option[Int] = None)(implicit session: DBSession = autoSession): Tag = {
+    deleted: Option[Int] = None)(implicit session: DBSession): Tag = {
     val generatedKey = withSQL {
       insert.into(Tag).columns(
         column.ownerId,
@@ -167,7 +167,7 @@ object Tag extends SQLSyntaxSupport[Tag] {
       deleted = deleted)
   }
 
-  def save(entity: Tag)(implicit session: DBSession = autoSession): Tag = {
+  def save(entity: Tag)(implicit session: DBSession): Tag = {
     withSQL {
       update(Tag).set(
         column.id -> entity.id,
@@ -193,7 +193,7 @@ object Tag extends SQLSyntaxSupport[Tag] {
     entity
   }
         
-  def destroy(entity: Tag)(implicit session: DBSession = autoSession): Unit = {
+  def destroy(entity: Tag)(implicit session: DBSession): Unit = {
     withSQL { delete.from(Tag).where.eq(column.id, entity.id) }.update.apply()
   }
         

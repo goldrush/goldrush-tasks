@@ -38,7 +38,7 @@ class DeliveryMailMatching(session: DBSession) {
             createdUser = Some("MailMaching"),
             updatedUser = Some("MailMaching"),
             deletedAt = None,
-            deleted = Some(0))
+            deleted = Some(0))(session)
         }
       }
 

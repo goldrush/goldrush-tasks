@@ -23,8 +23,9 @@ mappings in Universal <+= (packageBin in Compile, sourceDirectory ) map { (_, sr
 bashScriptConfigLocation := Some("${app_home}/../conf/jvmopts")
 
 libraryDependencies ++= Seq(
-  "org.scalikejdbc" %% "scalikejdbc"        % scalikeJDBCVersion withSources() withJavadoc(),
-  "org.scalikejdbc" %% "scalikejdbc-config"  % scalikeJDBCVersion,
+  "org.scalikejdbc" %% "scalikejdbc"             % scalikeJDBCVersion withSources() withJavadoc(),
+  "org.scalikejdbc" %% "scalikejdbc-config"      % scalikeJDBCVersion,
+  "org.scalikejdbc" %% "scalikejdbc-play-plugin" % "2.3.2",
   "mysql" % "mysql-connector-java" % "5.1.6",
   "ch.qos.logback"  %  "logback-classic"    % "1.1.+",
   "org.scalikejdbc" %% "scalikejdbc-test" % scalikeJDBCVersion % "test" withSources() withJavadoc(),

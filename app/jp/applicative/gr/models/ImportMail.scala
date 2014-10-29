@@ -36,6 +36,9 @@ class ImportMail(
   val pluralFlg: Option[Int] = None,
   val importMailMatchId: Option[Long] = None,
   val matchingWayType: String,
+  val interviewCount: Option[Int] = None,
+  val foreignType: String,
+  val sexType: String,
   val createdAt: DateTime,
   val updatedAt: DateTime,
   val lockVersion: Option[Long] = None,
@@ -77,6 +80,9 @@ class ImportMail(
     pluralFlg: Option[Int] = this.pluralFlg,
     importMailMatchId: Option[Long] = this.importMailMatchId,
     matchingWayType: String = this.matchingWayType,
+    interviewCount: Option[Int] = this.interviewCount,
+    foreignType: String = this.foreignType,
+    sexType: String = this.sexType,
     createdAt: DateTime = this.createdAt,
     updatedAt: DateTime = this.updatedAt,
     lockVersion: Option[Long] = this.lockVersion,
@@ -117,6 +123,9 @@ class ImportMail(
       pluralFlg = pluralFlg,
       importMailMatchId = importMailMatchId,
       matchingWayType = matchingWayType,
+      interviewCount = interviewCount,
+      foreignType = foreignType,
+      sexType = sexType,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -126,9 +135,9 @@ class ImportMail(
       deleted = deleted)
   }
 
-  def save()(implicit session: DBSession = ImportMail.autoSession): ImportMail = ImportMail.save(this)(session)
+  def save()(implicit session: DBSession): ImportMail = ImportMail.save(this)(session)
 
-  def destroy()(implicit session: DBSession = ImportMail.autoSession): Unit = ImportMail.destroy(this)(session)
+  def destroy()(implicit session: DBSession): Unit = ImportMail.destroy(this)(session)
 
 }
       
@@ -137,7 +146,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
 
   override val tableName = "import_mails"
 
-  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "subject_tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "plural_flg", "import_mail_match_id", "matching_way_type", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "subject_tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "plural_flg", "import_mail_match_id", "matching_way_type", "interview_count", "foreign_type", "sex_type", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(im: SyntaxProvider[ImportMail])(rs: WrappedResultSet): ImportMail = apply(im.resultName)(rs)
   def apply(im: ResultName[ImportMail])(rs: WrappedResultSet): ImportMail = new ImportMail(
@@ -173,6 +182,9 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     pluralFlg = rs.get(im.pluralFlg),
     importMailMatchId = rs.get(im.importMailMatchId),
     matchingWayType = rs.get(im.matchingWayType),
+    interviewCount = rs.get(im.interviewCount),
+    foreignType = rs.get(im.foreignType),
+    sexType = rs.get(im.sexType),
     createdAt = rs.get(im.createdAt),
     updatedAt = rs.get(im.updatedAt),
     lockVersion = rs.get(im.lockVersion),
@@ -186,27 +198,27 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
 
   override val autoSession = AutoSession
 
-  def find(id: Long)(implicit session: DBSession = autoSession): Option[ImportMail] = {
+  def find(id: Long)(implicit session: DBSession): Option[ImportMail] = {
     withSQL {
       select.from(ImportMail as im).where.eq(im.id, id)
     }.map(ImportMail(im.resultName)).single.apply()
   }
           
-  def findAll()(implicit session: DBSession = autoSession): List[ImportMail] = {
+  def findAll()(implicit session: DBSession): List[ImportMail] = {
     withSQL(select.from(ImportMail as im)).map(ImportMail(im.resultName)).list.apply()
   }
           
-  def countAll()(implicit session: DBSession = autoSession): Long = {
+  def countAll()(implicit session: DBSession): Long = {
     withSQL(select(sqls"count(1)").from(ImportMail as im)).map(rs => rs.long(1)).single.apply().get
   }
           
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[ImportMail] = {
+  def findAllBy(where: SQLSyntax)(implicit session: DBSession): List[ImportMail] = {
     withSQL { 
       select.from(ImportMail as im).where.append(sqls"${where}")
     }.map(ImportMail(im.resultName)).list.apply()
   }
       
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
+  def countBy(where: SQLSyntax)(implicit session: DBSession): Long = {
     withSQL { 
       select(sqls"count(1)").from(ImportMail as im).where.append(sqls"${where}")
     }.map(_.long(1)).single.apply().get
@@ -244,13 +256,16 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     pluralFlg: Option[Int] = None,
     importMailMatchId: Option[Long] = None,
     matchingWayType: String,
+    interviewCount: Option[Int] = None,
+    foreignType: String,
+    sexType: String,
     createdAt: DateTime,
     updatedAt: DateTime,
     lockVersion: Option[Long] = None,
     createdUser: Option[String] = None,
     updatedUser: Option[String] = None,
     deletedAt: Option[DateTime] = None,
-    deleted: Option[Int] = None)(implicit session: DBSession = autoSession): ImportMail = {
+    deleted: Option[Int] = None)(implicit session: DBSession): ImportMail = {
     val generatedKey = withSQL {
       insert.into(ImportMail).columns(
         column.ownerId,
@@ -284,6 +299,9 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.pluralFlg,
         column.importMailMatchId,
         column.matchingWayType,
+        column.interviewCount,
+        column.foreignType,
+        column.sexType,
         column.createdAt,
         column.updatedAt,
         column.lockVersion,
@@ -323,6 +341,9 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         pluralFlg,
         importMailMatchId,
         matchingWayType,
+        interviewCount,
+        foreignType,
+        sexType,
         createdAt,
         updatedAt,
         lockVersion,
@@ -366,6 +387,9 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
       pluralFlg = pluralFlg,
       importMailMatchId = importMailMatchId,
       matchingWayType = matchingWayType,
+      interviewCount = interviewCount,
+      foreignType = foreignType,
+      sexType = sexType,
       createdAt = createdAt,
       updatedAt = updatedAt,
       lockVersion = lockVersion,
@@ -375,7 +399,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
       deleted = deleted)
   }
 
-  def save(entity: ImportMail)(implicit session: DBSession = autoSession): ImportMail = {
+  def save(entity: ImportMail)(implicit session: DBSession): ImportMail = {
     withSQL {
       update(ImportMail).set(
         column.id -> entity.id,
@@ -410,6 +434,9 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.pluralFlg -> entity.pluralFlg,
         column.importMailMatchId -> entity.importMailMatchId,
         column.matchingWayType -> entity.matchingWayType,
+        column.interviewCount -> entity.interviewCount,
+        column.foreignType -> entity.foreignType,
+        column.sexType -> entity.sexType,
         column.createdAt -> entity.createdAt,
         column.updatedAt -> entity.updatedAt,
         column.lockVersion -> entity.lockVersion,
@@ -422,7 +449,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     entity
   }
         
-  def destroy(entity: ImportMail)(implicit session: DBSession = autoSession): Unit = {
+  def destroy(entity: ImportMail)(implicit session: DBSession): Unit = {
     withSQL { delete.from(ImportMail).where.eq(column.id, entity.id) }.update.apply()
   }
         

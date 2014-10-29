@@ -24,9 +24,9 @@ case class ImportMailMatch(
   deletedAt: Option[DateTime] = None, 
   deleted: Option[Int] = None) {
 
-  def save()(implicit session: DBSession = ImportMailMatch.autoSession): ImportMailMatch = ImportMailMatch.save(this)(session)
+  def save()(implicit session: DBSession): ImportMailMatch = ImportMailMatch.save(this)(session)
 
-  def destroy()(implicit session: DBSession = ImportMailMatch.autoSession): Unit = ImportMailMatch.destroy(this)(session)
+  def destroy()(implicit session: DBSession): Unit = ImportMailMatch.destroy(this)(session)
 
 }
       
@@ -64,27 +64,27 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
 
   override val autoSession = AutoSession
 
-  def find(id: Long)(implicit session: DBSession = autoSession): Option[ImportMailMatch] = {
+  def find(id: Long)(implicit session: DBSession): Option[ImportMailMatch] = {
     withSQL {
       select.from(ImportMailMatch as imm).where.eq(imm.id, id)
     }.map(ImportMailMatch(imm.resultName)).single.apply()
   }
           
-  def findAll()(implicit session: DBSession = autoSession): List[ImportMailMatch] = {
+  def findAll()(implicit session: DBSession): List[ImportMailMatch] = {
     withSQL(select.from(ImportMailMatch as imm)).map(ImportMailMatch(imm.resultName)).list.apply()
   }
           
-  def countAll()(implicit session: DBSession = autoSession): Long = {
+  def countAll()(implicit session: DBSession): Long = {
     withSQL(select(sqls"count(1)").from(ImportMailMatch as imm)).map(rs => rs.long(1)).single.apply().get
   }
           
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[ImportMailMatch] = {
+  def findAllBy(where: SQLSyntax)(implicit session: DBSession): List[ImportMailMatch] = {
     withSQL { 
       select.from(ImportMailMatch as imm).where.append(sqls"${where}")
     }.map(ImportMailMatch(imm.resultName)).list.apply()
   }
       
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
+  def countBy(where: SQLSyntax)(implicit session: DBSession): Long = {
     withSQL { 
       select(sqls"count(1)").from(ImportMailMatch as imm).where.append(sqls"${where}")
     }.map(_.long(1)).single.apply().get
@@ -108,7 +108,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
     createdUser: Option[String] = None,
     updatedUser: Option[String] = None,
     deletedAt: Option[DateTime] = None,
-    deleted: Option[Int] = None)(implicit session: DBSession = autoSession): ImportMailMatch = {
+    deleted: Option[Int] = None)(implicit session: DBSession): ImportMailMatch = {
     val generatedKey = withSQL {
       insert.into(ImportMailMatch).columns(
         column.ownerId,
@@ -173,7 +173,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
       deleted = deleted)
   }
 
-  def save(entity: ImportMailMatch)(implicit session: DBSession = autoSession): ImportMailMatch = {
+  def save(entity: ImportMailMatch)(implicit session: DBSession): ImportMailMatch = {
     withSQL {
       update(ImportMailMatch).set(
         column.id -> entity.id,
@@ -200,7 +200,7 @@ object ImportMailMatch extends SQLSyntaxSupport[ImportMailMatch] {
     entity
   }
         
-  def destroy(entity: ImportMailMatch)(implicit session: DBSession = autoSession): Unit = {
+  def destroy(entity: ImportMailMatch)(implicit session: DBSession): Unit = {
     withSQL { delete.from(ImportMailMatch).where.eq(column.id, entity.id) }.update.apply()
   }
         

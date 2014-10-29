@@ -20,9 +20,9 @@ case class SysConfig(
   deletedAt: Option[DateTime] = None, 
   deleted: Option[Int] = None) {
 
-  def save()(implicit session: DBSession = SysConfig.autoSession): SysConfig = SysConfig.save(this)(session)
+  def save()(implicit session: DBSession): SysConfig = SysConfig.save(this)(session)
 
-  def destroy()(implicit session: DBSession = SysConfig.autoSession): Unit = SysConfig.destroy(this)(session)
+  def destroy()(implicit session: DBSession): Unit = SysConfig.destroy(this)(session)
 
 }
       
@@ -56,27 +56,27 @@ object SysConfig extends SQLSyntaxSupport[SysConfig] {
 
   override val autoSession = AutoSession
 
-  def find(id: Long)(implicit session: DBSession = autoSession): Option[SysConfig] = {
+  def find(id: Long)(implicit session: DBSession): Option[SysConfig] = {
     withSQL {
       select.from(SysConfig as sc).where.eq(sc.id, id)
     }.map(SysConfig(sc.resultName)).single.apply()
   }
           
-  def findAll()(implicit session: DBSession = autoSession): List[SysConfig] = {
+  def findAll()(implicit session: DBSession): List[SysConfig] = {
     withSQL(select.from(SysConfig as sc)).map(SysConfig(sc.resultName)).list.apply()
   }
           
-  def countAll()(implicit session: DBSession = autoSession): Long = {
+  def countAll()(implicit session: DBSession): Long = {
     withSQL(select(sqls"count(1)").from(SysConfig as sc)).map(rs => rs.long(1)).single.apply().get
   }
           
-  def findAllBy(where: SQLSyntax)(implicit session: DBSession = autoSession): List[SysConfig] = {
+  def findAllBy(where: SQLSyntax)(implicit session: DBSession): List[SysConfig] = {
     withSQL { 
       select.from(SysConfig as sc).where.append(sqls"${where}")
     }.map(SysConfig(sc.resultName)).list.apply()
   }
       
-  def countBy(where: SQLSyntax)(implicit session: DBSession = autoSession): Long = {
+  def countBy(where: SQLSyntax)(implicit session: DBSession): Long = {
     withSQL { 
       select(sqls"count(1)").from(SysConfig as sc).where.append(sqls"${where}")
     }.map(_.long(1)).single.apply().get
@@ -96,7 +96,7 @@ object SysConfig extends SQLSyntaxSupport[SysConfig] {
     createdUser: Option[String] = None,
     updatedUser: Option[String] = None,
     deletedAt: Option[DateTime] = None,
-    deleted: Option[Int] = None)(implicit session: DBSession = autoSession): SysConfig = {
+    deleted: Option[Int] = None)(implicit session: DBSession): SysConfig = {
     val generatedKey = withSQL {
       insert.into(SysConfig).columns(
         column.ownerId,
@@ -149,7 +149,7 @@ object SysConfig extends SQLSyntaxSupport[SysConfig] {
       deleted = deleted)
   }
 
-  def save(entity: SysConfig)(implicit session: DBSession = autoSession): SysConfig = {
+  def save(entity: SysConfig)(implicit session: DBSession): SysConfig = {
     withSQL {
       update(SysConfig).set(
         column.id -> entity.id,
@@ -172,7 +172,7 @@ object SysConfig extends SQLSyntaxSupport[SysConfig] {
     entity
   }
         
-  def destroy(entity: SysConfig)(implicit session: DBSession = autoSession): Unit = {
+  def destroy(entity: SysConfig)(implicit session: DBSession): Unit = {
     withSQL { delete.from(SysConfig).where.eq(column.id, entity.id) }.update.apply()
   }
         

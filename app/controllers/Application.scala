@@ -14,12 +14,16 @@ object Application extends Controller {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def mailMatching = Action.async { request =>
-    val task: String  = request.getQueryString("task").getOrElse("default")
+  def mailMatching = Action { request =>
+    val task: String = request.getQueryString("task").getOrElse("default")
 
-    val mailMatchingFuture = Future { Task.mailMatching(task) }
-    val dummyFuture        = Future { "Start Mail matching task." }
-
-    dummyFuture.map(Ok(_))
+    val mailMatchingFuture = Future {
+      try {
+        Task.mailMatching(task)
+      } catch {
+        case e:Throwable => Logger.error("MailMatching", e)
+      }
+    }
+    Ok("Done")
   }
 }
