@@ -15,13 +15,6 @@ object Task {
   def mailMatching(task: String): Unit = {
     val session = AutoSession
 
-    GlobalSettings.loggingSQLAndTime = LoggingSQLAndTimeSettings(
-      enabled = false,
-      logLevel = 'DEBUG,
-      warningEnabled = true,
-      warningThresholdMillis = 1000L,
-      warningLogLevel = 'WARN)
-
     java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"))
 
     List(task) match {
