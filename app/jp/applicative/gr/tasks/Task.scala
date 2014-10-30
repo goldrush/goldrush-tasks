@@ -34,7 +34,7 @@ object Task {
         }
       case _ =>
         OwnerEx.findAll()(session).par.map {owner => 
-          log.debug("Process at owner_id: ${owner.id}")
+          log.debug(s"Process at owner_id: ${owner.id}")
           val imm = new ImportMailMatching(owner.id, session)
           val last_id = imm.matching
           val dmm = new DeliveryMailMatching(owner.id, session)
