@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 
 class ImportMailMatching(val owner_id: Long, val session: DBSession) {
 
-  private val log = LoggerFactory.getLogger(this.getClass())
+  private val log = LoggerFactory.getLogger(s"${this.getClass()}(owner: $owner_id)")
 
   val util = new MatchingUtil(owner_id)
 

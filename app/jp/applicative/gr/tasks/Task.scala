@@ -39,6 +39,7 @@ object Task {
           val last_id = imm.matching
           val dmm = new DeliveryMailMatching(owner.id, session)
           dmm.matching(last_id)
+          log.debug(s"Done at owner_id: ${owner.id}")
         }
     }
   }
