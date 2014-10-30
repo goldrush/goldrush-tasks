@@ -24,20 +24,20 @@ object Task {
 
     java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("UTC"))
 
-    val imm = new ImportMailMatching(session)
     List(task) match {
       case "pluralAll" :: _ =>
         Stream.from(0).foreach { i =>
           val list = ImportMailEx.findAllByPage(i)(session)
           if (list.isEmpty) return
+          val imm = new ImportMailMatching(0, session)
           list.foreach(im => imm.pluralAnalyze(im))
         }
       case _ =>
-        OwnerEx.findAll()(session).par.map {owner =>
-          log.debug(s"Matching owner_id: ${owner.id}")
-          val last_id = imm.matching(owner.id)
-          val dmm = new DeliveryMailMatching(session)
-          dmm.matching(owner.id, last_id)
+        OwnerEx.findAll()(session).par.map {owner => 
+          val imm = new ImportMailMatching(owner.id, session)
+          val last_id = imm.matching
+          val dmm = new DeliveryMailMatching(owner.id, session)
+          dmm.matching(last_id)
         }
     }
   }

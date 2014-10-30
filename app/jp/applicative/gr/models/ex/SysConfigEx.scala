@@ -11,7 +11,7 @@ object SysConfigEx {
   def findLastId(owner_id: Long)(implicit session: DBSession): Option[SysConfig] = findSectionKey(owner_id)("import_mail_matches", "last_id")
   def findSectionKey(owner_id: Long)(section: String, key: String)(implicit session: DBSession): Option[SysConfig] = {
     withSQL {
-      select.from(SysConfig as sc).where.eq(sc.ownerId, owner_id).eq(sc.configSection, section).and.eq(sc.configKey, key).and.eq(sc.deleted, 0)
+      select.from(SysConfig as sc).where.eq(sc.ownerId, owner_id).and.eq(sc.configSection, section).and.eq(sc.configKey, key).and.eq(sc.deleted, 0)
     }.map(SysConfig(sc.resultName)).single.apply()
   }
 

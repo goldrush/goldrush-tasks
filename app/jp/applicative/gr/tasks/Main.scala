@@ -29,21 +29,22 @@ object Main {
     val dbenv:String = opt.get("dbenv").flatMap(x => x).getOrElse("development")
     DBsWithEnv(dbenv).setupAll()
     
-    implicit val session = AutoSession
+    val session = AutoSession
 
-    val imm = new ImportMailMatching(session)
     args.toList match {
       case "pluralAll" :: _ =>
         Stream.from(0).foreach { i =>
-          val list = ImportMailEx.findAllByPage(i)
+          val list = ImportMailEx.findAllByPage(i)(session)
           if (list.isEmpty) return
+          val imm = new ImportMailMatching(0, session)
           list.foreach(im => imm.pluralAnalyze(im))
         }
       case _ =>
         OwnerEx.findAll()(session).par.map {owner => 
-          val last_id = imm.matching(owner.id)
-          val dmm = new DeliveryMailMatching(session)
-          dmm.matching(owner.id, last_id)
+          val imm = new ImportMailMatching(owner.id, session)
+          val last_id = imm.matching
+          val dmm = new DeliveryMailMatching(owner.id, session)
+          dmm.matching(last_id)
         }
     }
   }

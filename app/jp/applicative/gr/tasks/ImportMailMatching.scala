@@ -8,13 +8,13 @@ import scalikejdbc.AutoSession
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 
-class ImportMailMatching(val session: DBSession) {
+class ImportMailMatching(val owner_id: Long, val session: DBSession) {
 
   private val log = LoggerFactory.getLogger(this.getClass())
 
-  val util = new MatchingUtil
+  val util = new MatchingUtil(owner_id)
 
-  def matching(owner_id: Long): Long = {
+  def matching: Long = {
     log.info("start")
     val result: Long = SysConfigEx.lastId(owner_id)(session) match {
       case None => ImportMailEx.findLastId(owner_id)(session).map { last_id =>
@@ -33,7 +33,7 @@ class ImportMailMatching(val session: DBSession) {
           if (bizList.nonEmpty) {
             log.info("matching bizOffers to bpMembers")
             val bpmTargetList = ImportMailEx.findBpMemberTargets(owner_id)(now_last_id, days)(session) // 非対称 biz -> bpは最新から、bp -> bizは前回最終からマッチング。最新×最新がダブるのを避ける
-            matching_in(owner_id, bizList, bpmTargetList)
+            matching_in(bizList, bpmTargetList)
           }
 
           log.info("find bpMembers")
@@ -42,7 +42,7 @@ class ImportMailMatching(val session: DBSession) {
           if (bpmList.nonEmpty) {
             log.info("matching bpMembers to bizOffers")
             val bizTargetList = ImportMailEx.findBizOfferTargets(owner_id)(last_id, days)(session)
-            matching_in(owner_id, bizTargetList, bpmList)
+            matching_in(bizTargetList, bpmList)
           }
 
           SysConfigEx.createOrUpdateLastId(owner_id)(now_last_id)(session)
@@ -67,7 +67,7 @@ class ImportMailMatching(val session: DBSession) {
     case None => 1
   })
   
-  private def matching_in(owner_id:Long, bizList: List[ImportMail], bpmList: List[ImportMail]) {
+  private def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
     for {
       biz <- bizList
       bpm <- bpmList

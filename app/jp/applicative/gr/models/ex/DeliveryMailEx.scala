@@ -19,7 +19,8 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
   def findTargetMails(owner_id: Long)(days: Int, matchingWayType: String)(implicit session: DBSession) = {
     withSQL {
       select.from(DeliveryMail as dm).join(BpPicGroup as g).on(g.id, dm.bpPicGroupId)
-        .where.eq(dm.ownerId, owner_id).gt(dm.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days))
+        .where.eq(dm.ownerId, owner_id)
+        .and.gt(dm.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days))
         .and.eq(g.matchingWayType, matchingWayType)
         .and.ne(dm.mailStatusType, "editing")
         .and.eq(g.deleted, 0)

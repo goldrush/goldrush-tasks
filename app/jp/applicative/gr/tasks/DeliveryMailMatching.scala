@@ -7,11 +7,11 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.slf4j.LoggerFactory
 
-class DeliveryMailMatching(session: DBSession) {
+class DeliveryMailMatching(val owner_id: Long, session: DBSession) {
 
   private val log = LoggerFactory.getLogger(this.getClass())
 
-  val util = new MatchingUtil
+  val util = new MatchingUtil(owner_id)
 
   private def matching_in(d: DeliveryMail, im: ImportMail) {
     d.tagText.map { (z: String) =>
@@ -45,7 +45,7 @@ class DeliveryMailMatching(session: DBSession) {
     }
   }
 
-  def matching(owner_id: Long, last_id: Long) {
+  def matching(last_id: Long) {
     // 配信メールを取得する対象となる日数を取得
     val days: Int = SysConfigEx.deliveryMailTargetDays(owner_id)(session)
     // 配信メールにぶつける取込メールの取得日数(取込メール自動マッチングと共用)
