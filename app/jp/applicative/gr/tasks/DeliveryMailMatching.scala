@@ -45,29 +45,28 @@ class DeliveryMailMatching(session: DBSession) {
     }
   }
 
-  def matching(last_id: Long) {
+  def matching(owner_id: Long, last_id: Long) {
     // 配信メールを取得する対象となる日数を取得
-    val days: Int = SysConfigEx.deliveryMailTargetDays(session)
+    val days: Int = SysConfigEx.deliveryMailTargetDays(owner_id)(session)
     // 配信メールにぶつける取込メールの取得日数(取込メール自動マッチングと共用)
-    val importMailDays: Int = SysConfigEx.importMailTargetDays(session)
-    //val last_id: Long = ImportMailEx.findLastId.getOrElse(0)
-    log.info("start")
+    val importMailDays: Int = SysConfigEx.importMailTargetDays(owner_id)(session)
+    log.info(s"start last_id: $last_id")
     for {
-      d <- DeliveryMailEx.findBizOfferMails(days)(session)
+      d <- DeliveryMailEx.findBizOfferMails(owner_id)(days)(session)
     } {
       log.debug("biz:" + d.id)
       DB localTx { implicit session =>
-        val list = ImportMailEx.findBpMembersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
+        val list = ImportMailEx.findBpMembersOrDays(owner_id)(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
         list.foreach(matching_in(d, _))
         DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
       }
     }
     for {
-      d <- DeliveryMailEx.findBpMemberMails(days)(session)
+      d <- DeliveryMailEx.findBpMemberMails(owner_id)(days)(session)
     } {
       log.debug("bpm:" + d.id)
       DB localTx { implicit session =>
-        val list = ImportMailEx.findBizOffersOrDays(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
+        val list = ImportMailEx.findBizOffersOrDays(owner_id)(d.autoMatchingLastId.getOrElse(0), last_id, importMailDays)
         list.foreach(matching_in(d, _))
         DeliveryMailEx.updateAutoMatchingLastId(d, last_id)
       }

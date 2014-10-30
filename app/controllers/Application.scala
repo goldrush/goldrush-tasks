@@ -10,6 +10,8 @@ import jp.applicative.gr.tasks._
 
 object Application extends Controller {
 
+  var busy = false
+  
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
   }
@@ -19,7 +21,17 @@ object Application extends Controller {
 
     val mailMatchingFuture = Future {
       try {
-        Task.mailMatching(task)
+        Logger.debug(s"before check flg: $busy")
+        if(!busy)
+          synchronized {
+            Logger.debug(s"Thread in the synchronized zone: ${Thread.currentThread().getName()}")
+            try {
+              busy = true
+              Task.mailMatching(task)
+            }finally{
+              busy = false
+            }
+          }
       } catch {
         case e:Throwable => Logger.error("MailMatching", e)
       }

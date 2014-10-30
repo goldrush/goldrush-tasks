@@ -40,9 +40,11 @@ object Main {
           list.foreach(im => imm.pluralAnalyze(im))
         }
       case _ =>
-        val last_id = imm.matching
-        val dmm = new DeliveryMailMatching(session)
-        dmm.matching(last_id)
+        OwnerEx.findAll()(session).par.map {owner => 
+          val last_id = imm.matching(owner.id)
+          val dmm = new DeliveryMailMatching(session)
+          dmm.matching(owner.id, last_id)
+        }
     }
   }
 

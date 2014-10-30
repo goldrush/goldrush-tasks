@@ -16,10 +16,10 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
   val dm = DeliveryMail.syntax("dm")
   val g = BpPicGroup.syntax("g")
 
-  def findTargetMails(days: Int, matchingWayType: String)(implicit session: DBSession) = {
+  def findTargetMails(owner_id: Long)(days: Int, matchingWayType: String)(implicit session: DBSession) = {
     withSQL {
       select.from(DeliveryMail as dm).join(BpPicGroup as g).on(g.id, dm.bpPicGroupId)
-        .where.gt(dm.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days))
+        .where.eq(dm.ownerId, owner_id).gt(dm.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days))
         .and.eq(g.matchingWayType, matchingWayType)
         .and.ne(dm.mailStatusType, "editing")
         .and.eq(g.deleted, 0)
@@ -27,9 +27,9 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
     }.map(DeliveryMail(dm.resultName)).list.apply()
   }
 
-  def findBizOfferMails(days: Int)(implicit session: DBSession) = findTargetMails(days, "biz_offer")
+  def findBizOfferMails(owner_id: Long)(days: Int)(implicit session: DBSession) = findTargetMails(owner_id)(days, "biz_offer")
 
-  def findBpMemberMails(days: Int)(implicit session: DBSession) = findTargetMails(days, "bp_member")
+  def findBpMemberMails(owner_id: Long)(days: Int)(implicit session: DBSession) = findTargetMails(owner_id)(days, "bp_member")
 
   def updateAutoMatchingLastId(d: DeliveryMail, autoMatchingLastId: Long)(implicit session: DBSession) {
     DeliveryMailEx.saveWithLockVersion(

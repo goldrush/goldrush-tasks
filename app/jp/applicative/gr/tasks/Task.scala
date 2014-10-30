@@ -5,9 +5,13 @@ import scalikejdbc.config._
 import java.io.FileNotFoundException
 import org.joda.time.DateTimeZone
 import jp.applicative.gr.models.ex._
+import org.slf4j.LoggerFactory
+
 
 object Task {
 
+  private val log = LoggerFactory.getLogger(this.getClass())
+  
   def mailMatching(task: String): Unit = {
     val session = AutoSession
 
@@ -29,9 +33,12 @@ object Task {
           list.foreach(im => imm.pluralAnalyze(im))
         }
       case _ =>
-        val last_id = imm.matching
-        val dmm = new DeliveryMailMatching(session)
-        dmm.matching(last_id)
+        OwnerEx.findAll()(session).par.map {owner =>
+          log.debug(s"Matching owner_id: ${owner.id}")
+          val last_id = imm.matching(owner.id)
+          val dmm = new DeliveryMailMatching(session)
+          dmm.matching(owner.id, last_id)
+        }
     }
   }
 

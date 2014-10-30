@@ -14,41 +14,42 @@ class ImportMailMatching(val session: DBSession) {
 
   val util = new MatchingUtil
 
-  def matching(): Long = {
+  def matching(owner_id: Long): Long = {
     log.info("start")
-    val result: Long = SysConfigEx.lastId(session) match {
-      case None => ImportMailEx.findLastId(session).map { last_id =>
-        SysConfigEx.createLastId(last_id)(session)
-        log.info("初めての実行です。過去分を無視します")
+    val result: Long = SysConfigEx.lastId(owner_id)(session) match {
+      case None => ImportMailEx.findLastId(owner_id)(session).map { last_id =>
+        SysConfigEx.createLastId(owner_id)(last_id)(session)
+        log.info("It is the first execution. A part for the past is disregarded.")
         last_id
       }.getOrElse(0)
       case Some(last_id) =>
-        ImportMailEx.findLastId(session).map { now_last_id =>
-          val days = SysConfigEx.importMailTargetDays(session)
+        log.debug("last_id = $last_id")
+        ImportMailEx.findLastId(owner_id)(session).map { now_last_id =>
+          val days = SysConfigEx.importMailTargetDays(owner_id)(session)
 
           log.info("find bizOffers")
           // 前回処理から追加された案件メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
-          val bizList = ImportMailEx.findBizOffers(last_id, now_last_id)(session).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
+          val bizList = ImportMailEx.findBizOffers(owner_id)(last_id, now_last_id)(session).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bizList.nonEmpty) {
             log.info("matching bizOffers to bpMembers")
-            val bpmTargetList = ImportMailEx.findBpMemberTargets(now_last_id, days)(session) // 非対称 biz -> bpは最新から、bp -> bizは前回最終からマッチング。最新×最新がダブるのを避ける
-            matching_in(bizList, bpmTargetList)
+            val bpmTargetList = ImportMailEx.findBpMemberTargets(owner_id)(now_last_id, days)(session) // 非対称 biz -> bpは最新から、bp -> bizは前回最終からマッチング。最新×最新がダブるのを避ける
+            matching_in(owner_id, bizList, bpmTargetList)
           }
 
           log.info("find bpMembers")
           // 前回処理から追加された人材メールを取得し、複数件判定しフラグを立てつつ処理対象から外す
-          val bpmList = ImportMailEx.findBpMembers(last_id, now_last_id)(session).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
+          val bpmList = ImportMailEx.findBpMembers(owner_id)(last_id, now_last_id)(session).map(pluralAnalyze).filter(_.pluralFlg.getOrElse(0) == 0)
           if (bpmList.nonEmpty) {
             log.info("matching bpMembers to bizOffers")
-            val bizTargetList = ImportMailEx.findBizOfferTargets(last_id, days)(session)
-            matching_in(bizTargetList, bpmList)
+            val bizTargetList = ImportMailEx.findBizOfferTargets(owner_id)(last_id, days)(session)
+            matching_in(owner_id, bizTargetList, bpmList)
           }
 
-          SysConfigEx.createOrUpdateLastId(now_last_id)(session)
+          SysConfigEx.createOrUpdateLastId(owner_id)(now_last_id)(session)
           now_last_id
         }.getOrElse(last_id)
     }
-    log.info("end")
+    log.info("end now_last_id = $result")
     result
   }
 
@@ -66,7 +67,7 @@ class ImportMailMatching(val session: DBSession) {
     case None => 1
   })
   
-  private def matching_in(bizList: List[ImportMail], bpmList: List[ImportMail]) {
+  private def matching_in(owner_id:Long, bizList: List[ImportMail], bpmList: List[ImportMail]) {
     for {
       biz <- bizList
       bpm <- bpmList
@@ -81,7 +82,7 @@ class ImportMailMatching(val session: DBSession) {
           if (p > 0) {
             val now = new DateTime(DateTimeZone.UTC)
             ImportMailMatch.create(
-              ownerId = None,
+              ownerId = Some(owner_id),
               bizOfferMailId = biz.id,
               bpMemberMailId = bpm.id,
               mailMatchScore = Some(p),
