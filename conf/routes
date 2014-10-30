@@ -5,8 +5,8 @@
 # Home page
 GET     /                           controllers.Application.index
 
-# Home page
 GET     /api/mail_matching          controllers.Application.mailMatching
+GET     /api/delete_mail_matching   controllers.Application.deleteMailMatching
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

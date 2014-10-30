@@ -19,22 +19,35 @@ object Application extends Controller {
   def mailMatching = Action { request =>
     val task: String = request.getQueryString("task").getOrElse("default")
 
-    val mailMatchingFuture = Future {
-      try {
-        Logger.debug(s"before check flg: $busy")
-        if(!busy)
-          synchronized {
-            Logger.debug(s"Thread in the synchronized zone: ${Thread.currentThread().getName()}")
-            try {
-              busy = true
-              Task.mailMatching(task)
-            }finally{
-              busy = false
-            }
+    val fu = Future {
+      Logger.debug(s"before check flg: $busy")
+      if(!busy) {
+        synchronized {
+          Logger.debug(s"mailMatching Thread in the synchronized zone: ${Thread.currentThread().getName()}")
+          try {
+            busy = true
+            Task.mailMatching(task)
+          }finally{
+            busy = false
           }
-      } catch {
-        case e:Throwable => Logger.error("MailMatching", e)
+        }
       }
+    }
+    fu.onFailure {
+      case t => Logger.error("MailMatching onFailure", t)
+    }
+    Ok("Done")
+  }
+  
+  def deleteMailMatching = Action { request =>
+    val fu = Future {
+      synchronized {
+        Logger.debug(s"deleteMailMatching Thread in the synchronized zone: ${Thread.currentThread().getName()}")
+        Task.deleteMailMatching
+      }
+    }
+    fu.onFailure {
+      case t => Logger.error("DeleteMailMatching onFailure", t)
     }
     Ok("Done")
   }

@@ -84,4 +84,11 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
       saveWithLockVersion(entity, retry - 1)
     }
   }
+  
+  def deleteDeliveryMailMatches(days: Int)(implicit session: DBSession) {
+    SQL("create table new_delivery_mail_matches like delivery_mail_matches").execute().apply()(session)
+    SQL("insert into new_delivery_mail_matches select * from delivery_mail_matches where created_at > date_add(current_timestamp(), interval - 14 day)").execute().apply()(session)
+    SQL("rename table delivery_mail_matches to old_delivery_mail_matches, new_delivery_mail_matches to delivery_mail_matches").execute().apply()(session)
+    SQL("drop table old_delivery_mail_matches").execute().apply()(session)
+  }
 }

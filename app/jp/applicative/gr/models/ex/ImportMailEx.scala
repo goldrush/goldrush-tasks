@@ -45,4 +45,11 @@ object ImportMailEx {
     }.map(ImportMail(im.resultName)).single.apply().map(_.id)
   }
   
+  def deleteImportMailMatches(days: Int)(implicit session: DBSession) {
+    SQL("create table new_import_mail_matches like import_mail_matches").execute().apply()
+    SQL("insert into new_import_mail_matches select * from import_mail_matches where created_at > date_add(current_timestamp(), interval - 14 day)").execute().apply()
+    SQL("rename table import_mail_matches to old_import_mail_matches, new_import_mail_matches to import_mail_matches").execute().apply()
+    SQL("drop table old_import_mail_matches").execute().apply()
+  }
+  
 }

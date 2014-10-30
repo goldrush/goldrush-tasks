@@ -36,5 +36,13 @@ object Task {
         }
     }
   }
+  
+  def deleteMailMatching {
+    val session = AutoSession
+    ImportMailEx.deleteImportMailMatches(14)(session)
+    log.debug("deleteImportMailMatches done")
+    DeliveryMailEx.deleteDeliveryMailMatches(14)(session)
+    log.debug("deleteDeliveryMailMatches done")
+  }
 
 }
