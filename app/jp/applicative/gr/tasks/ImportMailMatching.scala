@@ -23,7 +23,7 @@ class ImportMailMatching(val owner_id: Long, val session: DBSession) {
         last_id
       }.getOrElse(0)
       case Some(last_id) =>
-        log.debug("last_id = $last_id")
+        log.debug(s"last_id = $last_id")
         ImportMailEx.findLastId(owner_id)(session).map { now_last_id =>
           val days = SysConfigEx.importMailTargetDays(owner_id)(session)
 
@@ -49,7 +49,7 @@ class ImportMailMatching(val owner_id: Long, val session: DBSession) {
           now_last_id
         }.getOrElse(last_id)
     }
-    log.info("end now_last_id = $result")
+    log.info(s"end now_last_id = $result")
     result
   }
 
