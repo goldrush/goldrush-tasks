@@ -4,27 +4,28 @@ import scalikejdbc._
 import org.joda.time.{ DateTime, DateTimeZone }
 import jp.applicative.gr.models.SysConfig
 
-object SysConfigEx {
+class SysConfigEx(val owner_id: Option[Long]) extends OwnerIdable[SysConfig] {
 
   val sc = SysConfig.syntax("sc")
+  val q = sc
 
-  def findLastId(owner_id: Long)(implicit session: DBSession): Option[SysConfig] = findSectionKey(owner_id)("import_mail_matches", "last_id")
-  def findSectionKey(owner_id: Long)(section: String, key: String)(implicit session: DBSession): Option[SysConfig] = {
+  def findLastId(implicit session: DBSession): Option[SysConfig] = findSectionKey("import_mail_matches", "last_id")
+  def findSectionKey(section: String, key: String)(implicit session: DBSession): Option[SysConfig] = {
     withSQL {
-      select.from(SysConfig as sc).where.eq(sc.ownerId, owner_id).and.eq(sc.configSection, section).and.eq(sc.configKey, key).and.eq(sc.deleted, 0)
+      select.from(SysConfig as sc).where.append(_sqls).and.eq(sc.configSection, section).and.eq(sc.configKey, key).and.eq(sc.deleted, 0)
     }.map(SysConfig(sc.resultName)).single.apply()
   }
 
-  def lastId(owner_id: Long)(implicit session: DBSession): Option[Long] = {
-    findLastId(owner_id).flatMap(x => x.value1).map(_.toLong)
+  def lastId(implicit session: DBSession): Option[Long] = {
+    findLastId.flatMap(x => x.value1).map(_.toLong)
   }
 
-  def importMailTargetDays(owner_id: Long)(implicit session: DBSession): Int = findSectionKey(owner_id)("import_mail_matches", "target_days").flatMap(_.value1.map(_.toInt)).getOrElse(3)
+  def importMailTargetDays(implicit session: DBSession): Int = findSectionKey("import_mail_matches", "target_days").flatMap(_.value1.map(_.toInt)).getOrElse(3)
 
-  def deliveryMailTargetDays(owner_id: Long)(implicit session: DBSession): Int = findSectionKey(owner_id)("delivery_mail_matches", "target_days").flatMap(_.value1.map(_.toInt)).getOrElse(3)
+  def deliveryMailTargetDays(implicit session: DBSession): Int = findSectionKey("delivery_mail_matches", "target_days").flatMap(_.value1.map(_.toInt)).getOrElse(3)
 
-  def createOrUpdateLastId(owner_id: Long)(last_id: Long)(implicit session: DBSession) {
-    findLastId(owner_id) match {
+  def createOrUpdateLastId(last_id: Long)(implicit session: DBSession) {
+    findLastId match {
       case Some(conf) =>
         SysConfig.save(
           SysConfig(
@@ -43,14 +44,14 @@ object SysConfigEx {
             updatedUser = Some("MailMatching"),
             deletedAt = conf.deletedAt,
             deleted = conf.deleted))
-      case None => createLastId(owner_id)(last_id)
+      case None => createLastId(last_id)
     }
   }
 
-  def createLastId(owner_id: Long)(last_id: Long)(implicit session: DBSession) {
+  def createLastId(last_id: Long)(implicit session: DBSession) {
     val now = new DateTime(DateTimeZone.UTC)
     SysConfig.create(
-      ownerId = Some(owner_id),
+      ownerId = owner_id,
       configSection = "import_mail_matches",
       configKey = "last_id",
       value1 = Some(last_id.toString),

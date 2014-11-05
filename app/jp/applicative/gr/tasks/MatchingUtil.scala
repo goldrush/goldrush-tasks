@@ -4,14 +4,15 @@ import org.slf4j.LoggerFactory
 import scalikejdbc.AutoSession
 import jp.applicative.gr.models.ex.TagEx
 
-class MatchingUtil(val owner_id: Long) {
+class MatchingUtil(val owner_id: Option[Long]) {
 
   private val log = LoggerFactory.getLogger(this.getClass())
 
   implicit val session = AutoSession
   
-  val goodTags = TagEx.goodTagSet(owner_id)
-  val veryGoodTags = TagEx.veryGoodTagSet(owner_id)
+  val tag = new TagEx(owner_id)
+  val goodTags = tag.goodTagSet
+  val veryGoodTags = tag.veryGoodTagSet
   
   val plu = PluralAnalyzer.default // TODO: sys_configs
   

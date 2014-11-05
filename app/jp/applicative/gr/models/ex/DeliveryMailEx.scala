@@ -7,19 +7,20 @@ import scala.annotation.tailrec
 
 class RetryCountOverError extends RuntimeException
 
-object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
+class DeliveryMailEx(val owner_id: Option[Long]) extends SQLSyntaxSupport[DeliveryMail] with OwnerIdable[DeliveryMail] {
 
   override val tableName = "delivery_mails"
 
   override val columns = Seq("id", "owner_id", "delivery_mail_type", "bp_pic_group_id", "biz_offer_id", "bp_member_id", "mail_status_type", "subject", "content", "mail_from_name", "mail_from", "mail_cc", "mail_bcc", "planned_setting_at", "mail_send_status_type", "send_end_at", "tag_text", "payment", "age", "auto_matching_last_id", "import_mail_match_id", "matching_way_type", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   val dm = DeliveryMail.syntax("dm")
+  val q = dm
   val g = BpPicGroup.syntax("g")
 
-  def findTargetMails(owner_id: Long)(days: Int, matchingWayType: String)(implicit session: DBSession) = {
+  def findTargetMails(days: Int, matchingWayType: String)(implicit session: DBSession) = {
     withSQL {
       select.from(DeliveryMail as dm).join(BpPicGroup as g).on(g.id, dm.bpPicGroupId)
-        .where.eq(dm.ownerId, owner_id)
+        .where.append(_sqls)
         .and.gt(dm.createdAt, (new DateTime(DateTimeZone.UTC)).minusDays(days))
         .and.eq(g.matchingWayType, matchingWayType)
         .and.ne(dm.mailStatusType, "editing")
@@ -28,12 +29,12 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
     }.map(DeliveryMail(dm.resultName)).list.apply()
   }
 
-  def findBizOfferMails(owner_id: Long)(days: Int)(implicit session: DBSession) = findTargetMails(owner_id)(days, "biz_offer")
+  def findBizOfferMails(days: Int)(implicit session: DBSession) = findTargetMails(days, "biz_offer")
 
-  def findBpMemberMails(owner_id: Long)(days: Int)(implicit session: DBSession) = findTargetMails(owner_id)(days, "bp_member")
+  def findBpMemberMails(days: Int)(implicit session: DBSession) = findTargetMails(days, "bp_member")
 
   def updateAutoMatchingLastId(d: DeliveryMail, autoMatchingLastId: Long)(implicit session: DBSession) {
-    DeliveryMailEx.saveWithLockVersion(
+    saveWithLockVersion(
       d.copy(
         autoMatchingLastId = Some(autoMatchingLastId),
         updatedAt = new DateTime(DateTimeZone.UTC),
@@ -41,7 +42,7 @@ object DeliveryMailEx extends SQLSyntaxSupport[DeliveryMail] {
   }
 
   @tailrec
-  def saveWithLockVersion(entity: DeliveryMail, retry: Int = 60)(implicit session: DBSession): DeliveryMail = {
+  final def saveWithLockVersion(entity: DeliveryMail, retry: Int = 60)(implicit session: DBSession): DeliveryMail = {
     val rows: Int = withSQL {
       update(DeliveryMail).set(
         column.id -> entity.id,

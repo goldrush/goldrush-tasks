@@ -34,19 +34,25 @@ object Main {
     args.toList match {
       case "pluralAll" :: _ =>
         Stream.from(0).foreach { i =>
-          val list = ImportMailEx.findAllByPage(i)(session)
+          val importMail = new ImportMailEx(None)
+          val list = importMail.findAllByPage(i)(session)
           if (list.isEmpty) return
-          val imm = new ImportMailMatching(0, session)
+          val imm = new ImportMailMatching(None, session)
           list.foreach(im => imm.pluralAnalyze(im))
         }
       case _ =>
-        OwnerEx.findAll()(session).par.map {owner => 
-          val imm = new ImportMailMatching(owner.id, session)
-          val last_id = imm.matching
-          val dmm = new DeliveryMailMatching(owner.id, session)
-          dmm.matching(last_id)
+        OwnerEx.findAll()(session) match {
+          case Nil => f(None)(session)
+          case owners => owners.par.map {owner => f(Some(owner.id))(session)}
         }
     }
+  }
+  
+  private def f(o: Option[Long])(implicit session: DBSession){
+    val imm = new ImportMailMatching(o, session)
+    val last_id = imm.matching
+    val dmm = new DeliveryMailMatching(o, session)
+    dmm.matching(last_id)
   }
 
 }

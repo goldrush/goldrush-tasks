@@ -4,16 +4,17 @@ import scalikejdbc._
 import org.joda.time.{DateTime}
 import jp.applicative.gr.models.Tag
 
-object TagEx {
+class TagEx(val owner_id: Option[Long]) extends OwnerIdable[Tag] {
 
   val t = Tag.syntax("t")
+  val q = t
 
-  def veryGoodTagSet(owner_id: Long)(implicit session: DBSession): Set[String] = starredTagSet(owner_id)(2)
+  def veryGoodTagSet(implicit session: DBSession): Set[String] = starredTagSet(2)
 
-  def goodTagSet(owner_id: Long)(implicit session: DBSession): Set[String] = starredTagSet(owner_id)(1)
+  def goodTagSet(implicit session: DBSession): Set[String] = starredTagSet(1)
   
-  def starredTagSet(owner_id: Long)(s: Int)(implicit session: DBSession): Set[String] = starredTagList(owner_id)(s).map(_.tagText).toSet
+  def starredTagSet(s: Int)(implicit session: DBSession): Set[String] = starredTagList(s).map(_.tagText).toSet
   
-  def starredTagList(owner_id: Long)(s: Int)(implicit session: DBSession): List[Tag] = Tag.findAllBy(sqls.eq(t.ownerId, owner_id).and.eq(t.tagKey, "import_mails").and.eq(t.starred, s).and.eq(t.deleted, 0))
+  def starredTagList(s: Int)(implicit session: DBSession): List[Tag] = Tag.findAllBy(_sqls.and.eq(t.tagKey, "import_mails").and.eq(t.starred, s).and.eq(t.deleted, 0))
 
 }
