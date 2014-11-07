@@ -30,8 +30,6 @@ class ImportMail(
   val subjectTagText: Option[String] = None,
   val payment: Option[Double] = None,
   val age: Option[Int] = None,
-  val paymentText: Option[String] = None,
-  val ageText: Option[String] = None,
   val nearestStation: Option[String] = None,
   val pluralFlg: Option[Int] = None,
   val importMailMatchId: Option[Long] = None,
@@ -74,8 +72,6 @@ class ImportMail(
     subjectTagText: Option[String] = this.subjectTagText,
     payment: Option[Double] = this.payment,
     age: Option[Int] = this.age,
-    paymentText: Option[String] = this.paymentText,
-    ageText: Option[String] = this.ageText,
     nearestStation: Option[String] = this.nearestStation,
     pluralFlg: Option[Int] = this.pluralFlg,
     importMailMatchId: Option[Long] = this.importMailMatchId,
@@ -117,8 +113,6 @@ class ImportMail(
       subjectTagText = subjectTagText,
       payment = payment,
       age = age,
-      paymentText = paymentText,
-      ageText = ageText,
       nearestStation = nearestStation,
       pluralFlg = pluralFlg,
       importMailMatchId = importMailMatchId,
@@ -146,7 +140,7 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
 
   override val tableName = "import_mails"
 
-  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "subject_tag_text", "payment", "age", "payment_text", "age_text", "nearest_station", "plural_flg", "import_mail_match_id", "matching_way_type", "interview_count", "foreign_type", "sex_type", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
+  override val columns = Seq("id", "owner_id", "business_partner_id", "bp_pic_id", "in_reply_to", "delivery_mail_id", "received_at", "mail_subject", "mail_body", "mail_from", "mail_sender_name", "mail_to", "mail_cc", "mail_bcc", "message_id", "biz_offer_flg", "bp_member_flg", "registed", "unwanted", "proper_flg", "outflow_mail_flg", "starred", "tag_text", "subject_tag_text", "payment", "age", "nearest_station", "plural_flg", "import_mail_match_id", "matching_way_type", "interview_count", "foreign_type", "sex_type", "created_at", "updated_at", "lock_version", "created_user", "updated_user", "deleted_at", "deleted")
 
   def apply(im: SyntaxProvider[ImportMail])(rs: WrappedResultSet): ImportMail = apply(im.resultName)(rs)
   def apply(im: ResultName[ImportMail])(rs: WrappedResultSet): ImportMail = new ImportMail(
@@ -176,8 +170,6 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     subjectTagText = rs.get(im.subjectTagText),
     payment = rs.get(im.payment),
     age = rs.get(im.age),
-    paymentText = rs.get(im.paymentText),
-    ageText = rs.get(im.ageText),
     nearestStation = rs.get(im.nearestStation),
     pluralFlg = rs.get(im.pluralFlg),
     importMailMatchId = rs.get(im.importMailMatchId),
@@ -250,8 +242,6 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
     subjectTagText: Option[String] = None,
     payment: Option[Double] = None,
     age: Option[Int] = None,
-    paymentText: Option[String] = None,
-    ageText: Option[String] = None,
     nearestStation: Option[String] = None,
     pluralFlg: Option[Int] = None,
     importMailMatchId: Option[Long] = None,
@@ -293,8 +283,6 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.subjectTagText,
         column.payment,
         column.age,
-        column.paymentText,
-        column.ageText,
         column.nearestStation,
         column.pluralFlg,
         column.importMailMatchId,
@@ -335,8 +323,6 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         subjectTagText,
         payment,
         age,
-        paymentText,
-        ageText,
         nearestStation,
         pluralFlg,
         importMailMatchId,
@@ -381,8 +367,6 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
       subjectTagText = subjectTagText,
       payment = payment,
       age = age,
-      paymentText = paymentText,
-      ageText = ageText,
       nearestStation = nearestStation,
       pluralFlg = pluralFlg,
       importMailMatchId = importMailMatchId,
@@ -428,8 +412,6 @@ object ImportMail extends SQLSyntaxSupport[ImportMail] {
         column.subjectTagText -> entity.subjectTagText,
         column.payment -> entity.payment,
         column.age -> entity.age,
-        column.paymentText -> entity.paymentText,
-        column.ageText -> entity.ageText,
         column.nearestStation -> entity.nearestStation,
         column.pluralFlg -> entity.pluralFlg,
         column.importMailMatchId -> entity.importMailMatchId,
